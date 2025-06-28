@@ -1,4 +1,4 @@
-import { Texture } from "bt-engine/graphics/resources/texture"
+import { Texture } from "@engine/graphics/resources/texture"
 import { Tile } from "../modules/tiles"
 
 

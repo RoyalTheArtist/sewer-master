@@ -1,5 +1,5 @@
-import { NoAction } from "@/modules/actors";
-import { StandardGameInput } from "bt-engine/input";
+import { NoAction } from "@modules/actors";
+import { StandardGameInput } from "@engine/input";
 import { InputHandler } from "@/apps/handler.base";
 
 export class MainMenuInputHandler extends InputHandler {

@@ -19,8 +19,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, "./game"),
-      'bt-engine': path.resolve(__dirname, "./bt-engine"),
-      '@resources': path.resolve(__dirname, "./resources"),
+      '@engine': path.resolve(__dirname, "./bt-engine"),
+      '@assets': path.resolve(__dirname, "./resources"),
+      '@modules': path.resolve(__dirname, "./modules"),
+      '@game': path.resolve(__dirname, "./game"),
     }
   }
 })

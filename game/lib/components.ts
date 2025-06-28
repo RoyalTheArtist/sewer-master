@@ -1,3 +1,3 @@
-import { Component } from "bt-engine/ecs";
+import { Component } from "@engine/ecs";
 
 export class BlocksMovement extends Component {}

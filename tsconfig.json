@@ -20,10 +20,12 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@/*": ["./game/*"],
-      "bt-engine/*": ["./bt-engine/*"],
-      "bt-engine": ["./bt-engine"],
+      "@engine/*": ["./bt-engine/*"],
+      "@modules/*": ["./modules/*"],
+      "@assets/*": ["./resources/*"],
+      "@game/*": ["./game/*"]
     }
   },
-  "include": ["game", "vite.config.ts", "bt-engine/render"],
+  "include": ["game", "vite.config.ts", "bt-engine/render", "modules/components.ts"],
   "exclude": ["game/apps/mapmaker"]
 }

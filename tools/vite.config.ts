@@ -18,7 +18,7 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@tools': fileURLToPath(new URL('./src', import.meta.url)),
-      'bt-engine':fileURLToPath(new URL('../bt-engine', import.meta.url)),
+      '@engine':fileURLToPath(new URL('../bt-engine', import.meta.url)),
     }
   }
 })

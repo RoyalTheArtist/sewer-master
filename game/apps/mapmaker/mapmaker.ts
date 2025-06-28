@@ -4,7 +4,7 @@ import { App } from '../app.base'
 import { GameMap, loadMap } from '../../modules/map'
 import { TileSetView } from './mm.tileSet'
 import { MapInfoView } from './mm.mapInfo'
-import { Vector2D } from 'bt-engine/utils'
+import { Vector2D } from '@engine/utils'
 
 declare global {
     interface Window {

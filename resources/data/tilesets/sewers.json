@@ -1,0 +1,25 @@
+{
+    "meta": {
+        "name": "Sewer Tileset",
+        "tileSize": [16, 16]
+    },
+    "spritesheet": {
+        "resource": "assets/images/dungeon_sewers_001.png",
+        "atlas": {
+            "brick": [0, 0],
+            "floor": [1, 0]
+        }
+    },
+    "tiles": {
+        "brick": {
+            "passable": false,
+            "transparent": false,
+            "sprite": [0, 0]
+        },
+        "floor": {
+            "passable": true,
+            "transparent": true,
+            "sprite": [1, 0]
+        }
+    }
+}

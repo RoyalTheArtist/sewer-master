@@ -1,9 +1,9 @@
 import '@/style.scss'
 
-import { Viewport, makeSurface } from 'bt-engine/render'
-import { Engine } from 'bt-engine'
+import { Viewport, makeSurface } from '@engine/render'
+import { Engine } from '@engine'
 import { MainMenuScreen } from './screens'
-import { AssetManager } from 'bt-engine/assets';
+import { AssetManager } from '@engine/assets';
 import { App } from './app.base'
 
 

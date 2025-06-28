@@ -4,17 +4,18 @@
 
 import { GameInputHandler } from "./game.handler"
 
-import { BaseScreen } from "bt-engine"
-import { Vector2D } from "bt-engine/utils"
-import { renderSystem } from "bt-engine/graphics"
-import { InputManager } from "bt-engine/input"
+import { BaseScreen } from "@engine/screen.base"
+import { Vector2D } from "@engine/utils"
+import { renderSystem } from "@engine/graphics"
+import { InputManager } from "@engine/input"
 
 import { Player } from '@/apps/player'
 import { Settings } from "@/apps/settings"
-import { GameMap } from "@/modules/map"
-import { Actor, ActionQueue } from "@/modules/actors"
-import { SurfaceLayer } from "bt-engine/render"
-import { Item } from "@/modules/items/items.base"
+import { GameMap } from "@modules/map"
+import { Actor } from "@modules/actors"
+import { SurfaceLayer } from "@engine/render"
+import { Item } from "@modules/items/items.base"
+import { ActionQueue } from "@/actions"
 
 // 1 = wall
 

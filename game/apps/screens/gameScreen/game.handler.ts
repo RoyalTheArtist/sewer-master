@@ -1,10 +1,10 @@
-import { Action, BumpAction, MoveAction } from "@/modules/actors"
-import { StandardGameInput } from "bt-engine/input"
-import { Vector2D } from "bt-engine/utils"
+import { Action, BumpAction } from "../../../actions"
+import { StandardGameInput } from "@engine/input"
+import { Vector2D } from "@engine/utils"
 
 import { InputHandler } from "@/apps/handler.base"
 import { Player } from "@/apps/player"
-import { PickupAction } from "@/modules/actors/actions/pickupActions"
+import { PickupAction } from "@game/actions/pickupActions"
 
 export class GameInputHandler extends InputHandler { 
     handleInput(input: StandardGameInput): Action | null {

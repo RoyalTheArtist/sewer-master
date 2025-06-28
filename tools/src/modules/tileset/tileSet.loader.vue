@@ -3,9 +3,16 @@ import FileInput from '@/components/fileInput.vue'
 import { getFileInputAs } from '@/utils/files';
 import { AssetManager } from 'bt-engine/assets';
 
+type MapLoadData = {
+    tileset: string,
+    meta: {},
+    layout: number[],
+    legend: {}
+}
+
 const handleLoad = async (elem: HTMLInputElement) => {
-    const tileSetData = await getFileInputAs(elem);
-    return tileSetData
+    const mapData = await getFileInputAs<MapLoadData>(elem);
+    return mapData
 }
 
 const onChange = async (event: Event) => {
@@ -29,7 +36,7 @@ const onChange = async (event: Event) => {
             </label>
             <label for="height">Height
                 <input type="number" value="10" name="height">
-            </label>     
+            </label>
         </section>
         <div class="preview"></div>
     </section>

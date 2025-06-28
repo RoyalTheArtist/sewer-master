@@ -1,4 +1,4 @@
-import { Vector2D } from "bt-engine/utils";
+import { Vector2D } from "@engine/utils";
 
 export const Settings = Object.freeze({
     map: {

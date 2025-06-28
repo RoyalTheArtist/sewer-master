@@ -1,13 +1,13 @@
 
 import { GameScreen } from "../gameScreen"
 
-import { InputManager } from "bt-engine/input"
-import { SurfaceLayer } from "bt-engine/render"
-import { BaseScreen } from "bt-engine/screen.base"
-import { Color, Vector2D } from "bt-engine/utils"
+import { InputManager } from "@engine/input"
+import { SurfaceLayer } from "@engine/render"
+import { BaseScreen } from "@engine/screen.base"
+import { Color, Vector2D } from "@engine/utils"
 
 import { Settings } from "@/apps/settings"
-import { createMap } from "@/modules/map"
+import { createMap } from "@modules/map"
 
 const mapDataOne = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
