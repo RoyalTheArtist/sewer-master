@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { makeSurface, Surface } from 'bt-engine/render';
-import {  Rect, Vector2D } from 'bt-engine/utils';
+import { makeSurface, Surface } from '@engine/render';
+import {  Rect, Vector2D } from '@engine/utils';
 import { onMounted, onUnmounted, useTemplateRef, watch } from 'vue';
 
-import { Colors } from 'bt-engine/graphics/colors'
-import { MouseHandler } from 'bt-engine/input/mouse';
+import { Colors } from '@engine/graphics/colors'
+import { MouseHandler } from '@engine/input/mouse';
 
 const target = useTemplateRef('target')
 
@@ -81,7 +81,7 @@ class SpritesheetViewer {
         const lockedCoords = {
             x: Math.floor(( this.mouse.mousePos.x + 3) / this.zoomedGrid.x),
             y: Math.floor(( this.mouse.mousePos.y + 3) / this.zoomedGrid.y)
-        } 
+        }
         return lockedCoords
     }
 

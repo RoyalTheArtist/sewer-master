@@ -2,7 +2,7 @@
 import { GameMap, IMapData } from "./map.base"
 
 import { Vector2D } from "@engine/utils"
-import { FLOOR_TILE, Tile, TileObject, WALL_TILE } from "@modules/tiles"
+import { FLOOR_TILE, Tile, TileObject, WALL_TILE } from "../tiles"
 
 const TILE_ATLAS = new Map<string | number, Tile>([
     [1, WALL_TILE],
@@ -29,12 +29,13 @@ export const Blank_Tile = {
  * @param height The height of the map
  * @returns A new `GameMap` object
  */
-export function createMap(mapData: number[], width: number, height: number) {
+export function createMap(mapData: number[], width: number, height: number): GameMap {
   const tiles = processMap(mapData)
   const map = loadMap({ width, height, tiles })
   map.initialize()
   return map
 }
+
 
 export function processMap(tiles: number[]) {
   const mapData = new Array(tiles.length)
@@ -52,7 +53,7 @@ export function createEmptyMap(size: Vector2D) {
     const y = Math.floor(i / width)
     tiles[i] = { ...Blank_Tile, position: new Vector2D(x, y) }
   }
-  return tiles
+  return loadMap({ width, height, tiles })
 }
 
 /**

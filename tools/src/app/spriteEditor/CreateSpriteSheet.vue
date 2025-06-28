@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import FileInput from '@/components/fileInput.vue';
-import TextInput from '@/components/TextInput.vue';
-import SpritesheetViewer from '@/modules/spritesheets/SpritesheetViewer.vue';
+import FileInput from '../../components/fileInput.vue';
+import TextInput from '../../components/TextInput.vue';
+import SpritesheetViewer from '../../modules/spritesheets/SpritesheetViewer.vue';
 import type { Rect } from 'bt-engine/utils';
 import { ref } from 'vue';
 
@@ -14,7 +14,7 @@ const loadImage = async (event: Event) => {
     if (target.files) {
         const image = new Image()
         image.src = URL.createObjectURL(target.files[0])
-        editImage.value = image 
+        editImage.value = image
     }
 }
 
@@ -37,15 +37,15 @@ const deleteSprite = (rect: Rect) => {
         <h3>New</h3>
         <FileInput placeholder="Load Image" @change="loadImage" accept=".png"></FileInput>
         <TextInput label="Name" />
-    
+
         <div class="container" style="max-width: 500px">
-            <SpritesheetViewer 
-                :atlas="atlas" 
-                :image="editImage" 
+            <SpritesheetViewer
+                :atlas="atlas"
+                :image="editImage"
                 @sprite:add="addSprite"
                 @sprite:delete="deleteSprite"></SpritesheetViewer>
         </div>
-        
+
     </section>
 </template>
 
@@ -53,6 +53,6 @@ const deleteSprite = (rect: Rect) => {
 section {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;  
+  gap: 0.5rem;
 }
 </style>

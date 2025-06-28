@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="pa-3">
+  <div class="px-md">
     <header>
       <h1>Tools</h1>
     </header>

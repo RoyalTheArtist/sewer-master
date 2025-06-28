@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import FileInput from '@/components/fileInput.vue'
-import { getFileInputAs } from '@/utils/files';
-import { AssetManager } from 'bt-engine/assets';
+import FileInput from '../../components/fileInput.vue'
+import { getFileInputAs } from '../../utils/files';
+import { AssetManager } from '@engine/assets';
 
 type MapLoadData = {
     tileset: string,
@@ -25,7 +25,6 @@ const onChange = async (event: Event) => {
 
 <template>
     <section id="tileset-loader" class="flex-col">
-        <h2>Tileset Info</h2>
         <header>
             <file-input placeholder="Load Tileset" @change="onChange" accept=".json,text/json" ></file-input>
         </header>

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import TileSetLoader from '@/modules/tileset/tileSet.loader.vue'
-import FileInput from '@/components/fileInput.vue'
+import FileInput from '../../components/fileInput.vue'
 import { getFileInputAs } from '@/utils/files';
 import { AssetManager } from '../../../../assets/manager';
 import { useRouter } from 'vue-router';
@@ -48,6 +47,6 @@ const newMap = () => {
     <h2>Map Maker</h2>
     <button type="button" @click="newMap" >New Map</button>
     <file-input placeholder="Load Map" @change="loadMap" accept=".json,text/json" ></file-input>
-    <!-- <tile-set-loader></tile-set-loader> -->
+    <!--  -->
     <router-view></router-view>
 </template>

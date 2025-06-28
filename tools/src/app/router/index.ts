@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/app/home/HomeView.vue'
+import HomeView from '../home/HomeView.vue'
 import { useMapMaker } from '../mapmaker/pages'
 import { useSpriteEditor } from '../spriteEditor/pages'
 

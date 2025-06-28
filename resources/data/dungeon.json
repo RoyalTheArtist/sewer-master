@@ -1,6 +1,6 @@
 {
     "spritesheet": {
-        "resource": "assets/images/basic tileset.png",
+        "resource": "assets/images/dungeon_sewers_002.png",
         "atlas": {
             "water": [0, 0, 20, 20],
             "grass": [20, 0, 20, 20],
