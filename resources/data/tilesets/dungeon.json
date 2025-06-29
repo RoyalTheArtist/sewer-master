@@ -1,10 +1,12 @@
 {
     "meta": {
-        "name": "Dungeon Tileset",
-        "tileSize": [16, 16]
+        "name": "Dungeon Tileset"
     },
     "spritesheet": {
-        "resource": "assets/images/dungeon_sewers_002.png",
+        "meta": {
+            "resource": "assets/images/dungeon_sewers_002.png",
+            "size": [16, 16]
+        },
         "atlas": {
             "brick": [1, 0],
             "floor": [3, 0]
@@ -14,12 +16,18 @@
         "brick": {
             "passable": false,
             "transparent": false,
-            "sprite": [0, 0]
+            "sprite": "brick",
+            "appearance": {
+                "sprite": "brick"
+            }
         },
         "floor": {
             "passable": true,
             "transparent": true,
-            "sprite": [1, 0]
+            "sprite": "floor",
+            "appearance": {
+                "sprite": "floor"
+            }
         }
     }
 }

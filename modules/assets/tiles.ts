@@ -1,13 +1,14 @@
 import { Texture } from "@engine/graphics/resources/texture"
-import { Tile } from "../modules/tiles"
+import { Tile } from "../tiles"
+import { create } from "domain"
 
 
 const allTileSets = new Map<string, TileSet>()
 const allSpritesheets = new Map<string, SpriteSheet>()
 
 export async function loadTileSet(tiles: TileSetData) {
-    if (allTileSets.has(tiles.meta.resource)) {
-        return allTileSets.get(tiles.meta.resource)
+    if (allTileSets.has(tiles.meta.name)) {
+        return allTileSets.get(tiles.meta.name)
     }
 
     const sheet = await loadSpritesheet(tiles.spritesheet as SpriteSheetData)
@@ -17,10 +18,26 @@ export async function loadTileSet(tiles: TileSetData) {
     for (const key in tiles.tiles) {
         tileSet.addTile(key, tiles.tiles[key])
     }
-    allTileSets.set(tiles.meta.resource, tileSet)
+    allTileSets.set(tiles.meta.name, tileSet)
+    return tileSet
+}
+
+export async function loadTileSetByDefinition(data: TileSetData) {
+    const sheet = await loadSpritesheet(data.spritesheet as SpriteSheetData)
+    if (!sheet) throw new Error('Sheet not found')
+    
+    const tileSet = createTileSet(sheet, data)
     return tileSet
 }
   
+const createTileSet = (sheet: SpriteSheet, data: TileSetData) => {
+    const tileSet = new TileSet(sheet, data.meta)
+    for (const key in data.tiles) {
+        tileSet.addTile(key, data.tiles[key])
+    }
+    return tileSet
+} 
+
 async function loadTexture(url: string) {
     const texture = new Texture(url)
     await texture.load()
@@ -28,34 +45,32 @@ async function loadTexture(url: string) {
 }
 
 interface SpriteSheetData {
-    resource: string,
+    meta: {
+        resource: string,
+        size: [number, number]
+    },
     atlas: SpriteAtlas
 }
 
 async function loadSpritesheet(spritesheet: SpriteSheetData) {
-    if (allSpritesheets.has(spritesheet.resource)) {
-        return allSpritesheets.get(spritesheet.resource)
+    if (allSpritesheets.has(spritesheet.meta.resource)) {
+        return allSpritesheets.get(spritesheet.meta.resource)
     }
 
-    const texture = await loadTexture(spritesheet.resource)
-    const sheet = new SpriteSheet(texture, spritesheet.atlas)
+    const texture = await loadTexture(spritesheet.meta.resource)
+    const sheet = new SpriteSheet(texture, spritesheet)
     sheet.process()
-    allSpritesheets.set(spritesheet.resource, sheet)
+    allSpritesheets.set(spritesheet.meta.resource, sheet)
     return sheet
 }
 
 export type TileSetAtlas = Record<string, TileSetData>
 type TileSetMeta = {
-    tilesize: {
-        width: number;
-        height: number;
-    },
-    resource: string
+    name: string
 }
 export interface TileSetData {
     spritesheet?: string | SpriteSheetData,
     meta: TileSetMeta,
-    atlas?: SpriteAtlas,
     tiles: Record<string, Tile>
 }
 
@@ -67,9 +82,11 @@ class SpriteSheet {
     private _texture: Texture
     private _atlas: SpriteAtlas
     private _sprites: Map<string, HTMLImageElement> = new Map()
-    constructor(texture: Texture, atlas: SpriteAtlas) {
+    private size: [number, number]
+    constructor(texture: Texture, data: SpriteSheetData) {
         this._texture = texture
-        this._atlas = atlas
+        this._atlas = data.atlas
+        this.size = data.meta.size
     }
 
     process() {
@@ -81,12 +98,15 @@ class SpriteSheet {
 
                 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D
 
-                const [x, y, w, h] = value
+                const [x, y] = value
+
+                const w = this.size[0]
+                const h = this.size[1]
 
                 canvas.width = w
                 canvas.height = h
 
-                ctx.drawImage(this._texture.image as HTMLImageElement, x, y, w, h, 0, 0, w, h)
+                ctx.drawImage(this._texture.image as HTMLImageElement, x * w, y * w, w, h, 0, 0, w, h)
                 const img = new Image()
                 img.src = canvas.toDataURL()
                 this._sprites.set(key, img)

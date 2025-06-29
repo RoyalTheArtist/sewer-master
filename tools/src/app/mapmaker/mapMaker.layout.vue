@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import FileInput from '../../components/fileInput.vue'
 import { getFileInputAs } from '@/utils/files';
-import { AssetManager } from '../../../../assets/manager';
+import { AssetManager } from '../../../../modules/assets/manager';
 import { useRouter } from 'vue-router';
 const assetManager = new AssetManager()
     const router = useRouter()

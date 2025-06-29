@@ -3,10 +3,13 @@
     src: url('/Baskic8.otf');
 }
 
+// https://www.fontspace.com/pixelated-elegance-font-f126145
 @font-face {
     font-family: 'Pixel Elegance';
     src: url('/PixelatedEleganceRegular-ovyAA.ttf');
 }
+
+
 
 .theme {
     font-family:var(--font-family);
