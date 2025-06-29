@@ -1,4 +1,6 @@
-import { makeSurface, type Viewport } from "@engine/render";
+import { makeSurface,  type Viewport } from "@engine/render";
+import { Vector2D } from "@engine/utils";
+import type { TileSet } from "@modules/assets/tiles";
 import type { GameMap } from "@modules/map";
 
 export class MapViewScreen {
@@ -12,14 +14,19 @@ export class MapViewScreen {
   public render() {
     this.screen.clear()
 
-    const grid = drawGrid(this.map.width, this.map.height, 20, 20)
+    const grid = drawGrid(this.map.width, this.map.height, 16, 16)
     this.screen.drawAlpha(grid, 0, 0, 1, 0.5)
 
+    if (this.map.tiles) {
+        const map = drawMap(this.map)
+        this.screen.drawAlpha(map, 0, 0, 1, 0)
+    }
+
     window.requestAnimationFrame((timeStamp) => {
-            const delta = timeStamp - this._lastUpdate
-            this._lastUpdate = timeStamp
-            this.update(delta)
-        })
+      const delta = timeStamp - this._lastUpdate
+      this._lastUpdate = timeStamp
+      this.update(delta)
+    })
   }
 
   public start() {
@@ -51,3 +58,31 @@ function drawGrid(width: number, height: number, tileWidth: number, tileHeight: 
 
     return surface.canvas
 }
+
+function drawMap(map: GameMap): HTMLCanvasElement {
+  const tileWidth = 16
+  const tileHeight = 16
+
+  const surface = makeSurface(map.width * tileWidth, map.height * tileHeight)
+
+  map.tiles.tiles.forEach((tile, index) => {
+    if (!tile.sprite) return
+
+    const tileImage = tile.sprite
+    if(!tileImage) return
+    const x = (index % map.width) * tileWidth
+    const y = Math.floor(index / map.width) * tileHeight
+    surface.draw(tileImage, new Vector2D(x, y))
+        //if (!tile.sprite || tile.sprite === "blank") return
+
+        //const tileImage = tileSet.getTileImage(tile.sprite)
+        //if(!tileImage) return
+    //   const x = (index % map.width) * TILE_WIDTH
+    //   const y = Math.floor(index / map.width) * TILE_HEIGHT
+
+
+    //   surface.draw(tileImage, x, y)
+    })
+
+    return surface.canvas
+  }

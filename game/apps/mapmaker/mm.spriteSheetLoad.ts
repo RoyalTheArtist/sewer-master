@@ -1,4 +1,4 @@
-import { loadTileSet, TileSetAtlas, TileSetData } from "../../assetManager/tiles"
+import { loadTileSet, TileSetAtlas, TileSetData } from "../../../modules/assets/tiles"
 import { MapMaker } from "./mapmaker"
 
 class EventTimer {

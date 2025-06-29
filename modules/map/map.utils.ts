@@ -1,14 +1,18 @@
-
 import { GameMap, IMapData } from "./map.base"
+import type { MapLoadData } from './types'
 
 import { Vector2D } from "@engine/utils"
 import { FLOOR_TILE, Tile, TileObject, WALL_TILE } from "../tiles"
+import { loadTileSetFrom, TileSet } from "@modules/assets/tiles"
+import { getFileInputAs } from "@modules/utils/files"
 
-const TILE_ATLAS = new Map<string | number, Tile>([
+const TILE_ATLAS = new Map<number, Tile>([
     [1, WALL_TILE],
     [0, FLOOR_TILE],
   ])
-  
+ 
+
+
 export const Blank_Tile = {
     passable: true,
     transparent: true,
@@ -36,6 +40,39 @@ export function createMap(mapData: number[], width: number, height: number): Gam
   return map
 }
 
+const generateMap = (mapData: MapLoadData, tileset: TileSet) => {
+  const map = new GameMap(new Vector2D(mapData.meta.size[0], mapData.meta.size[1]))
+  const mapLength = mapData.meta.size[0] * mapData.meta.size[1]
+  const legend = mapData.legend
+
+  const tileAtlas = new Map<number, Tile>()
+  for (let i = 0; i < legend.length; i++) {
+    const tile = tileset.getTile(legend[i])
+    if (tile) {
+      tileAtlas.set(i, tile)
+      }
+    } 
+
+  const tiles = new Array(mapLength)
+  for (let i = 0; i < mapLength; i++) {
+    const tile = tileAtlas.get(mapData.layout[i]) || tileAtlas.get(0)
+
+    if (!tile) {
+      tiles[i] = new TileObject(new Vector2D(i % mapData.meta.size[0], Math.floor(i / mapData.meta.size[0])), Blank_Tile).initialize()
+      continue
+
+    }
+    else {
+      const sprite = tileset.getTileImage(tile.appearance?.sprite as string)
+      const tileObj = new TileObject(new Vector2D(i % mapData.meta.size[0], Math.floor(i / mapData.meta.size[0])), { ...tile }, sprite).initialize()
+      tiles[i] = tileObj
+    }
+  }
+
+  map.tiles.setTiles(tiles)
+
+  return map
+}
 
 export function processMap(tiles: number[]) {
   const mapData = new Array(tiles.length)
@@ -78,7 +115,23 @@ function createTiles(tiles: Tile[], size: Vector2D): TileObject[] {
   for (let [i, tile] of tiles.entries()) {
     const x = i % width
     const y = Math.floor(i / width)
-    tileObjects[i] = new TileObject(new Vector2D(x, y), { ...tile })
+
+    const tileObj = new TileObject(new Vector2D(x, y), { ...tile }).initialize()
+    tileObjects[i] = tileObj
   }
   return tileObjects
 }
+
+export const loadMapFromData = async (data: MapLoadData): Promise<{ map: GameMap, tileset: TileSet }> => {
+  const tileset = await loadTileSetFrom(data.tileset)
+  const map = generateMap(data, tileset)
+  
+  return { map, tileset }
+}
+
+export const loadMapFromFile = async (input: HTMLInputElement) => {
+  if (!input.files) throw new Error('No file selected')
+  const mapData = await getFileInputAs<MapLoadData>(input.files[0])
+  return await loadMapFromData(mapData.value)
+}
+

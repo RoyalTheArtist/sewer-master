@@ -1,6 +1,7 @@
 import { Texture } from "@engine/graphics/resources/texture"
 import { Tile } from "../tiles"
-import { create } from "domain"
+import { fetchJson, getFileInputAs } from '@modules/utils/files'
+
 
 
 const allTileSets = new Map<string, TileSet>()
@@ -83,6 +84,14 @@ class SpriteSheet {
     private _atlas: SpriteAtlas
     private _sprites: Map<string, HTMLImageElement> = new Map()
     private size: [number, number]
+
+    public get width() {
+        return this.size[0]
+    }
+
+    public get height() {
+        return this.size[1]
+    }
     constructor(texture: Texture, data: SpriteSheetData) {
         this._texture = texture
         this._atlas = data.atlas
@@ -166,4 +175,15 @@ export class TileSet {
     }
 }
 
+export const loadTileSetFromFile = async (input: HTMLInputElement) => {
+    const load = await getFileInputAs<TileSetData>(input.files[0])
 
+    const tileset = await loadTileSetByDefinition(load.value)
+    return tileset
+}
+
+export const loadTileSetFrom = async (resource: string) => {
+    const tileSetData = await fetchJson<TileSetData>(`/${resource}`)
+    const tileSet = await loadTileSetByDefinition(tileSetData)
+    return tileSet
+}

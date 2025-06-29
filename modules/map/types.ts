@@ -1,6 +1,10 @@
-type MapLoadData = {
-    tileset: string,
-    meta: {},
-    layout: number[],
-    legend: {}
+
+export type MapLoadData = {
+  meta: {
+    name: string,
+    size: [width: number, height: number]
+  },
+  tileset: string,
+  layout: number[],
+  legend: string[]
 }

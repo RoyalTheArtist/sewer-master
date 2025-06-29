@@ -1,11 +1,11 @@
 import { Vector2D } from '@engine/utils/vectors'
 import { Viewport, Surface, makeSurface } from "@engine/render"
 import { Blank_Tile, GameMap } from "@modules/map"
-import { Tile } from "../../modules/tiles"
+import { Tile } from "@modules/tiles"
 import { App, } from "../app.base"
 import { MapMaker } from "./mapmaker"
 import { MouseHandler } from "@engine/input/mouse"
-import { TileSet } from "../../assetManager/tiles"
+import { TileSet } from "../../../modules/assets/tiles"
 
 
 

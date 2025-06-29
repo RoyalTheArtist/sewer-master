@@ -22,9 +22,17 @@ const tilesForView = computed(() => {
 </script>
 
 <template>
-  <div class="tiles" v-if="tileset">
-    <div class="tile" v-for="tile in tilesForView" :key="tile.toString()">
-        <img v-if="tile.img" :src="tile.img.src" alt="tile">
+  <section>
+    <h3>Tiles</h3>
+    <div class="tools">
+      <button type="button" class="add-tile">Paint</button>
+      <button type="button" class="fill-tile">Fill</button>
     </div>
-  </div>
+    <div class="tiles" v-if="tileset">
+      <div class="tile" v-for="tile in tilesForView" :key="tile.toString()">
+          <img v-if="tile.img" :src="tile.img.src" alt="tile">
+      </div>
+    </div>
+  </section>
+
 </template>

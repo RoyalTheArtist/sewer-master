@@ -1,9 +1,9 @@
 {
     "meta": {
         "name": "Test Map",
-        "tileset": "data/tilesets/sewers.json",
         "size": [10, 10]
     },
+    "tileset": "data/tilesets/dungeon.json",
     "layout": [
         1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
         1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -16,5 +16,5 @@
         1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1
     ],
-    "legend": ["brick", "floor"]
+    "legend": ["floor", "brick"]
 }

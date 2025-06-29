@@ -1,6 +1,6 @@
 import { imageTextureShader } from '../../../../webgl/shaders';
 import { App } from "../app.base"
-import { TileSet } from "../../assetManager/tiles"
+import { TileSet } from "../../../modules/assets/tiles"
 import { Tile } from "../maps/map"
 import { MapMaker } from "./mapmaker"
 
