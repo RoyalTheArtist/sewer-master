@@ -1,21 +1,66 @@
 // layout
-.flex-col {
-    display: flex;
-    flex-direction: column;
+.container {
+    display: var(--container-display, block);
+}
+
+.flex {
+    --container-display: flex;
+
+    &-col {
+        --container-display: flex;
+        flex-direction: column;
+    }
 }
 
 .align-center {
     align-items: center;
 }
 
-.flex {
-    display: flex;
-}
+
 
 .align-end {
     align-items: end;
 }
 
-.gap-xs {
-    gap: 0.25rem;
+// .gap-xs {
+//     gap: 0.25rem;
+// }
+
+@function gap($keyword) {
+    $gaps: (
+        "none": 0,
+        "xs": 0.25rem,
+        "sm": 0.5rem,
+        "md": 1rem,
+        "lg": 2rem,
+        "xl": 4rem,
+    );
+
+    @return map-get($gaps, $keyword);
+}
+
+.gap {
+    &-none {
+        gap: gap(none);
+    }
+
+    &-xs {
+        gap: gap(xs);
+    }
+
+    &-sm {
+        gap: gap(sm);
+    }
+
+    &-md {
+        gap: gap(md);
+    }
+
+    &-lg {
+        gap: gap(lg);
+    }
+
+    &-xl {
+        gap: gap(xl);
+    }
 }

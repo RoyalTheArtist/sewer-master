@@ -7,7 +7,7 @@
     <header>
       <h1>Tools</h1>
     </header>
-    <main>
+    <main class="container flex-col gap-sm">
       <RouterView />
     </main>
   </div>

@@ -13,6 +13,6 @@ const onChange = async (event: Event) => {
 
 <template>
   <header id="tileset-loader" class="flex-col">
-    <file-input placeholder="Load Tileset" @change="onChange" accept=".json,text/json" ></file-input>
+    <file-input label="Load" @change="onChange" accept=".json,text/json" ></file-input>
   </header>
 </template>

@@ -6,11 +6,9 @@ defineOptions({
     inheritAttrs: false
 })
 
-interface IFileInput {
-    label?: string
-}
-
-defineProps<IFileInput>()
+const props = withDefaults(defineProps<{ label: string }>(), {
+    label: "Browse"
+})
 
 
 const loadTiles = useTemplateRef('loadTiles')
@@ -24,11 +22,8 @@ const file = ref(null as File | null)
 
 <template>
     <slot name="activator" @click="onBrowse">
-
+      <button type="button" @click="onBrowse">{{props.label}}</button>
     </slot>
-    <label for="input-file">
-        <input type="text" name="input-file" readonly :value="file?.name" :placeholder="`${$attrs['placeholder'] || ''}`" @click="onBrowse">
-    </label>
     <input type="file" ref="loadTiles" class="display-none" :accept="`${$attrs['accept']}`" @change="$attrs.onChange">
 
 </template>

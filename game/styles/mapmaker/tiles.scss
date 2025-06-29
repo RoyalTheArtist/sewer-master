@@ -2,10 +2,8 @@
     grid-area: tiles;
 
     display: grid;
-    grid-template-columns: [active] 250px [active-end] 1fr [end];
-    grid-template-rows: 32px 42px 1fr;
+    grid-template-columns: [active] clamp(0px, 25%, 225px) [active-end] 1fr [end];
     gap: 4px;
-    padding: 0 12px;
     
     .tile {
         width: 100%;
@@ -18,7 +16,6 @@
         }
 
     }
-
 
     .tile-info {
         grid-column-start: active;

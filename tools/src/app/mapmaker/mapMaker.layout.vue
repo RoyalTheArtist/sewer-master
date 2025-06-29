@@ -46,9 +46,11 @@ const newMap = () => {
 
 <template>
     <h2>Map Maker</h2>
-    <button type="button" @click="newMap">New Map</button>
-    <!-- <button type="button" @click="loadMapFS">Load Map</button> -->
-    <file-input placeholder="Load Map" @change="loadMap" accept=".json,text/json" ></file-input>
+    <section class="toolbar">
+      <button type="button" @click="newMap">New</button>
+      <!-- <button type="button" @click="loadMapFS">Load Map</button> -->
+      <file-input label="Load" @change="loadMap" accept=".json,text/json" ></file-input>
+    </section>
     <router-view></router-view>
     <map-maker-page v-if="map" :map="map" :tileset="tileset"></map-maker-page>
 </template>
