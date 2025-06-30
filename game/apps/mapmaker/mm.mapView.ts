@@ -4,7 +4,7 @@ import { Blank_Tile, GameMap } from "@modules/map"
 import { Tile } from "@modules/tiles"
 import { App, } from "../app.base"
 import { MapMaker } from "./mapmaker"
-import { MouseHandler } from "@engine/input/mouse"
+import { useMouseHandler } from "@engine/input/mouse"
 import { TileSet } from "../../../modules/assets/tiles"
 
 
@@ -27,7 +27,7 @@ export class MapView extends App {
         this.width = this._el.clientWidth
         this.height = this._el.clientHeight
 
-        this.mouse = new MouseHandler()
+        this.mouse = useMouseHandler()
     }
 
     public init() {
@@ -122,7 +122,7 @@ function drawMap(map: GameMap, tileSet: TileSet): HTMLCanvasElement {
     const TILE_HEIGHT = tileSet.tileHeight
     const TILE_WIDTH = tileSet.tileWidth
   
-    const surface = new Surface(new Vector2D(map.width * TILE_WIDTH, map.height * TILE_HEIGHT))
+    const surface = makeSurface(map.width * TILE_WIDTH, map.height * TILE_HEIGHT)
 
     map.tileManager.tiles.forEach((tile, index) => {
         //if (!tile.sprite || tile.sprite === "blank") return

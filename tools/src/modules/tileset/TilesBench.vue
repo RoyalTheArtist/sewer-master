@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { TileSet } from '@modules/assets/tiles';
+import type { Tile } from '@modules/tiles';
 import { computed } from 'vue';
+
+const emit = defineEmits<{
+  (e: 'tile:selected', tile: Tile): void
+}>()
+
 
 const props = defineProps<{
   tileset: TileSet
@@ -14,6 +20,7 @@ const tilesForView = computed(() => {
       if (!tile.appearance?.sprite) return
       const img = props.tileset.getTileImage(tile.appearance.sprite as string)
       return {
+        tile,
         img,
       }
     }).filter(tile => tile !== undefined)
@@ -29,7 +36,7 @@ const tilesForView = computed(() => {
       <button type="button" class="fill-tile">Fill</button>
     </div>
     <div class="tiles" v-if="tileset">
-      <div class="tile" v-for="tile in tilesForView" :key="tile.toString()">
+      <div class="tile" v-for="tile in tilesForView" :key="tile.toString()" @click="emit('tile:selected', tile.tile)" >
           <img v-if="tile.img" :src="tile.img.src" alt="tile">
       </div>
     </div>

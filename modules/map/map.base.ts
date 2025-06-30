@@ -30,9 +30,9 @@ export class GameMap extends Entity implements IInitialize {
     return this._entities
   }
 
- constructor(public size: Vector2D) {
+ constructor(public size: Vector2D, tileManager: TileManager) {
     super()
-    this._tiles = new TileManager(size)
+    this._tiles = tileManager
   }
 
   public get width(): number {

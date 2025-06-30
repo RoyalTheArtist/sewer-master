@@ -2,7 +2,7 @@ import { GameMap, IMapData } from "./map.base"
 import type { MapLoadData } from './types'
 
 import { Vector2D } from "@engine/utils"
-import { FLOOR_TILE, Tile, TileObject, WALL_TILE } from "../tiles"
+import { FLOOR_TILE, Tile, TileManager, TileObject, WALL_TILE } from "../tiles"
 import { loadTileSetFrom, TileSet } from "@modules/assets/tiles"
 import { getFileInputAs } from "@modules/utils/files"
 
@@ -41,7 +41,9 @@ export function createMap(mapData: number[], width: number, height: number): Gam
 }
 
 const generateMap = (mapData: MapLoadData, tileset: TileSet) => {
-  const map = new GameMap(new Vector2D(mapData.meta.size[0], mapData.meta.size[1]))
+  const mapSize = new Vector2D(mapData.meta.size[0], mapData.meta.size[1])
+  const tileManager = new TileManager(mapSize, tileset)
+  const map = new GameMap(mapSize, tileManager)
   const mapLength = mapData.meta.size[0] * mapData.meta.size[1]
   const legend = mapData.legend
 

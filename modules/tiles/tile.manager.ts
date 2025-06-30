@@ -2,13 +2,18 @@
 import { Vector2D } from "@engine/utils"
 import { TileObject, Tile } from "./tile.base"
 import { calculateBitmask } from "./tiles.utils"
+import { TileSet } from "@modules/assets/tiles"
+import { IInitialize } from "@engine/update.h"
+
+export interface ITileManager extends IInitialize {
+  getTile(position: Vector2D): TileObject
+}
 
 
-
-export class TileManager {
+export class TileManager implements ITileManager {
     private _tiles: TileObject[]
   
-    constructor(public readonly dimensions: Vector2D) {
+    constructor(public readonly dimensions: Vector2D, public readonly tileset: TileSet) {
       this._tiles = new Array(this.size)
     }
   
@@ -50,25 +55,26 @@ export class TileManager {
     }
   
     public setTile(position: Vector2D, tile: Tile) {
-        this._tiles[position.y * this.dimensions.x + position.x] = new TileObject(new Vector2D(position.x, position.y), { ...tile})
+      const sprite = this.tileset.getTileImage(tile.appearance?.sprite as string)
+      this._tiles[position.y * this.dimensions.x + position.x] = new TileObject(new Vector2D(position.x, position.y), { ...tile}, sprite)
     }
   
-    public setTiles(tiles: TileObject[]) {
-        this._tiles = tiles
-    }
-  
-    public getTilesInBounds(position: Vector2D, dimensions: Vector2D) {
-      const { x: width, y: height } = dimensions
-  
-      const tiles = new Array(width * height)
-      for (let i = 0; i < width * height; i++) {
-        const x = position.x + i % width
-        const y = position.y +Math.floor(i / width)
-          const tile = this.getTile(new Vector2D(x, y))
-          if (tile) {
-              tiles.push(tile)
-          } 
-      }
-      return tiles
-    }
+  public setTiles(tiles: TileObject[]) {
+    this._tiles = tiles
   }
+  
+  public getTilesInBounds(position: Vector2D, dimensions: Vector2D) {
+    const { x: width, y: height } = dimensions
+
+    const tiles = new Array(width * height)
+    for (let i = 0; i < width * height; i++) {
+      const x = position.x + i % width
+      const y = position.y +Math.floor(i / width)
+        const tile = this.getTile(new Vector2D(x, y))
+        if (tile) {
+            tiles.push(tile)
+        } 
+    }
+    return tiles
+  }
+}

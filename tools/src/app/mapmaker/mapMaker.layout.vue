@@ -5,6 +5,8 @@ import { GameMap, loadMapFromFile } from '@modules/map';
 import MapMakerPage from './MapMakerPage.vue';
 import { ref } from 'vue';
 import type { TileSet } from '@modules/assets/tiles';
+import { Vector2D } from '@engine/utils';
+import { createEmptyMap } from "@modules/map/map.utils";
 
 const router = useRouter()
 
@@ -23,7 +25,8 @@ const loadMap = async (event: Event) => {
 }
 
 const newMap = () => {
-    router.push('/mapmaker/new')
+  map.value = createEmptyMap(new Vector2D(10, 10));
+  tileset.value = null
 }
 
 // NOTE TO SELF
@@ -51,6 +54,5 @@ const newMap = () => {
       <!-- <button type="button" @click="loadMapFS">Load Map</button> -->
       <file-input label="Load" @change="loadMap" accept=".json,text/json" ></file-input>
     </section>
-    <router-view></router-view>
     <map-maker-page v-if="map" :map="map" :tileset="tileset"></map-maker-page>
 </template>

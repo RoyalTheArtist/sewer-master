@@ -1,9 +1,7 @@
 .grid-tiles {
-    grid-area: tiles;
 
-    display: grid;
-    grid-template-columns: [active] clamp(0px, 25%, 225px) [active-end] 1fr [end];
-    gap: 4px;
+    display: flex;
+    gap: 8px;
     
     .tile {
         width: 100%;

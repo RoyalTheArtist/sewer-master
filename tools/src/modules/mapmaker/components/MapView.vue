@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { GameMap } from "@modules/map"
 import { makeViewport } from "@engine/render"
-import { onMounted, useTemplateRef } from "vue";
+import { onMounted, useTemplateRef, watch } from "vue";
 import { MapViewScreen } from "../mapViewScreen";
+import type { Tile } from "@modules/tiles";
 
-const props = defineProps<{ map: GameMap }>()
+const props = defineProps<{ map: GameMap, activeTile: Tile }>()
 
 const viewPort = makeViewport(800, 600)
 
@@ -18,6 +19,20 @@ onMounted(() => {
   mapViewContainer.value.appendChild(viewPort.surface.canvas)
   mapViewScreen.start()
 })
+
+watch(
+  () => props.map,
+  () => {
+    mapViewScreen.map = props.map
+  }
+)
+
+watch(
+  () => props.activeTile,
+  () => {
+    mapViewScreen.activeTile = props.activeTile
+  }
+)
 </script>
 
 <template>

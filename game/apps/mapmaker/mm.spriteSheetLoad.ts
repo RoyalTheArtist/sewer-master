@@ -130,7 +130,6 @@ export class TileSetLoader {
 }
 
 function getFileInputAs<T>(elem: HTMLInputElement): Promise<T> {
-
     return new Promise((resolve, reject) => {
         const file = elem.files?.[0];
         if (!file) {
