@@ -11,9 +11,9 @@ import { InputManager } from "@engine/input"
 
 import { Player } from '@/apps/player'
 import { Settings } from "@/apps/settings"
-import { GameMap } from "@modules/map"
+import { GameMapOld as GameMap } from "@modules/map"
 import { Actor } from "@modules/actors"
-import { SurfaceLayer } from "@engine/render"
+import { SurfaceLayer, ViewportSimple } from "@engine/render"
 import { Item } from "@modules/items/items.base"
 import { ActionQueue } from "@/actions"
 
@@ -26,6 +26,9 @@ export class GameScreen extends BaseScreen  {
     constructor(map: GameMap) {
         super()
         this._map = map
+    }
+    public get map(): GameMap {
+        return this._map
     }
 
     public initialize(): GameScreen {
@@ -51,21 +54,22 @@ export class GameScreen extends BaseScreen  {
         return this
     }
 
-    public get map(): GameMap {
-        return this._map
-    }
     update(delta: number) {
         const inputs = InputManager.getInputs(Settings.keyboardMappings.gameScreen)
         this._handler.handleInput(inputs)
     
-        const allEntities = new Set([...this.map.entities, ...this.map.tiles.tiles])
+        //const allEntities = new Set([...this.map.entities, ...this.map.tiles.tiles])
 
         this.map.update(delta) 
-        ActionQueue.processActions(delta)
-        renderSystem.query(allEntities)
-        renderSystem.update(delta)
-        renderSystem.draw()
+        // ActionQueue.processActions(delta)
+        // renderSystem.query(allEntities)
+        // renderSystem.update(delta)
+        // renderSystem.draw()
        
         return this
+    }
+
+    render(viewport: ViewportSimple): void {
+        
     }
 }

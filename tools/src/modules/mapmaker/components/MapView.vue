@@ -2,7 +2,7 @@
 import { onMounted, useTemplateRef, watch } from "vue";
 import { useMapView } from "../mapViewScreen";
 import type { Tile } from "@modules/tiles";
-import type { GameMapRW as GameMap} from "@modules/rewrites/map";
+import type { GameMap} from "@modules/map/map";
 
 const props = defineProps<{ map:GameMap, activeTile: Tile | null }>()
 const mapViewContainer = useTemplateRef('map-view')

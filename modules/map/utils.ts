@@ -1,6 +1,6 @@
 import { Vector2D } from "@engine/utils"
-import { GameMapRW as GameMap, type MapGenerationData } from "./map"
-import { Tile, TileMap, TileSet, TileSprite, type TileData, type TilesetData } from "./tiles/tile"
+import { GameMap, type MapGenerationData } from "./map"
+import { Tile, TileMap, TileSet, type TileData, type TilesetData } from "../rewrites/tiles/tile"
 import { Texture } from "@engine/render/graphics/texture"
 import { SpriteSheet } from "@engine/render/graphics/sprite"
 

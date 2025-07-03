@@ -25,7 +25,7 @@ const turnSystem = new TurnSystem()
 const combatSystem = new CombatSystem()
 
 
-export class GameMap extends Entity implements IInitialize {
+export class GameMapOld extends Entity implements IInitialize {
   private _tileManager: TileManager
   private _entities: Set<Entity> = new Set()
   private _activeActors: Set<Actor> = new Set()

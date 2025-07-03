@@ -3,7 +3,7 @@ import type { Tile } from '@modules/tiles';
 import MapView from '../../modules/mapmaker/components/MapView.vue';
 import TileSetView from '../../modules/tileset/TileSetView.vue';
 import { ref } from 'vue';
-import type { GameMapRW as GameMap} from '@modules/rewrites/map';
+import type { GameMap} from '@modules/map/map';
 
 const props = defineProps<{ map: GameMap }> ()
 

@@ -2,7 +2,7 @@
 import { Entity } from "@engine/ecs"
 import type { Appearance } from "../components"
 import type { IInitialize } from "@engine/update.h"
-import type { Surface } from "@modules/rewrites/render/surface"
+import type { Surface } from "@engine/render/surface"
 import { Vector2D } from "@engine/utils"
 import { Sprite, SpriteSheet } from "@engine/render/graphics/sprite"
 

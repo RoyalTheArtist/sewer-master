@@ -2,8 +2,8 @@
 import FileInput from '../../components/fileInput.vue'
 import MapMakerPage from './MapMakerPage.vue';
 import { ref } from 'vue';
-import { generateEmptyMap, generateMap } from '@modules/rewrites/utils';
-import type { GameMapRW as GameMap, MapGenerationData } from '@modules/rewrites/map';
+import { generateEmptyMap, generateMap } from '@modules/map/utils';
+import type { GameMap, MapGenerationData } from '@modules/map/map';
 import { handleLoad } from '@modules/utils/files';
 
 const map = ref<GameMap | null>(null)

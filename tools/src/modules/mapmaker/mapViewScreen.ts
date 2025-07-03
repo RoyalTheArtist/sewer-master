@@ -1,13 +1,13 @@
 
-import { Color, Vector2D } from "@engine/utils";
+import { Vector2D } from "@engine/utils";
 // import { Blank_Tile } from "@modules/map";
 import type { Tile } from "@modules/tiles";
 import { MouseHandler, useMouseHandler, type MouseState, type Position } from "@engine/input/mouse"
-import type { GameMapRW as GameMap } from "@modules/rewrites/map";
+import type { GameMap } from "@modules/map/map";
 import type { TileSprite } from "@modules/rewrites/tiles/tile";
-import { Surface, type IRenderable } from "@modules/rewrites/render/surface";
-import { SurfaceLayers } from "@modules/rewrites/render/surfaceLayers";
-import { Viewport } from "@modules/rewrites/render/viewport";
+import { Surface, type IRenderable } from "@engine/render/surface";
+import { SurfaceLayers } from "@engine/render/surfaceLayers";
+import {  ViewportSimple as Viewport } from "@engine/render/viewport";
 
 
 class GridElement implements IRenderable {

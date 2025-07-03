@@ -37,7 +37,7 @@ export interface MapLoadData {
   entities: Array<Entity>,
 }
 
-export class GameMapRW implements BaseMap {
+export class GameMap implements BaseMap {
     name: string
     size: Vector2D
     tiles: Tile[]
@@ -49,8 +49,6 @@ export class GameMapRW implements BaseMap {
       this.tiles = new Array(size.x * size.y)
       this.tileMap = tileMap
     }
-    
-
   
     public get width(): number {
       return this.size.x
