@@ -19,10 +19,10 @@ export function getFileInputAs<T>(file: File): Promise<FileInfo<T>> {
     })
 }
 
-// export const handleLoad = async <T>(elem: HTMLInputElement) => {
-//     const tileSetData = await getFileInputAs<T>(elem);
-//     return tileSetData
-// }  
+export const handleLoad = async <T>(file: File) => {
+    const tileSetData = await getFileInputAs<T>(file);
+    return tileSetData
+}  
 
 export async function fetchJson<T>(resource: string): Promise<T> { 
     try {

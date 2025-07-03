@@ -1,7 +1,7 @@
 import { Entity } from "@engine/ecs"
 import { IInitialize } from "@engine/update.h"
 
-import { Tile, TileManager } from "@modules/tiles"
+import { Tile, TileManager, TileObject } from "@modules/tiles"
 import { Vector2D } from "@engine/utils"
 import { Actor } from "../actors/actors"
 import { TurnSystem } from "../../game/systems/actors.systems"
@@ -15,14 +15,18 @@ export interface IMapData {
   tiles: Tile[]
 }
 
-
+interface BaseMap {
+  width: number
+  height: number
+  tiles: Tile[]
+}
 
 const turnSystem = new TurnSystem()
 const combatSystem = new CombatSystem()
 
 
 export class GameMap extends Entity implements IInitialize {
-  private _tiles: TileManager
+  private _tileManager: TileManager
   private _entities: Set<Entity> = new Set()
   private _activeActors: Set<Actor> = new Set()
   
@@ -32,7 +36,7 @@ export class GameMap extends Entity implements IInitialize {
 
  constructor(public size: Vector2D, tileManager: TileManager) {
     super()
-    this._tiles = tileManager
+    this._tileManager = tileManager
   }
 
   public get width(): number {
@@ -43,12 +47,13 @@ export class GameMap extends Entity implements IInitialize {
     return this.size.y
   }
 
-  public get tiles(): TileManager {
-    return this._tiles
+
+  public get tiles(): TileObject[] {
+    return this._tileManager.getAllTiles()
   }
 
   public initialize() {
-    this.tiles.initialize()
+    this._tileManager.initialize()
   }
 
   public update(delta: number) { 
@@ -78,7 +83,7 @@ export class GameMap extends Entity implements IInitialize {
   }
 
   isWalkable(position: Vector2D) {
-    const tile = this.tiles.getTile(position)
+    const tile = this._tileManager.getTile(position)
     if (tile) {
       return tile.passable
     } 
@@ -122,7 +127,7 @@ export class GameMap extends Entity implements IInitialize {
     return {
       width: this.width,
       height: this.height,
-      tiles: this.tiles.tiles
+      tiles: this.tiles
     }
   }
 }

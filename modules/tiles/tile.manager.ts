@@ -11,54 +11,58 @@ export interface ITileManager extends IInitialize {
 
 
 export class TileManager implements ITileManager {
-    private _tiles: TileObject[]
-  
-    constructor(public readonly dimensions: Vector2D, public readonly tileset: TileSet) {
-      this._tiles = new Array(this.size)
-    }
-  
-    public get size(): number {
-      return this.dimensions.x * this.dimensions.y
-    }
+  private _tiles: TileObject[]
 
-    public get width(): number {
-      return this.dimensions.x
-    }
-  
-    public get height(): number {
-      return this.dimensions.y
-    }
-  
-    public get tiles(): TileObject[] {
-      return this._tiles
-    }
-  
-    public initialize() {
-      for (const tile of this._tiles) {
-        tile.initialize()
-        }
-        this.process()
-    }
+  constructor(public readonly dimensions: Vector2D, public readonly tileset: TileSet) {
+    this._tiles = new Array(this.size)
+  }
 
-    public process() {
-      calculateBitmask(this)
-    }
-  
-    public update(delta: number) {
-      for (const tile of this._tiles) {
-        tile.update(delta)
+  public get size(): number {
+    return this.dimensions.x * this.dimensions.y
+  }
+
+  public get width(): number {
+    return this.dimensions.x
+  }
+
+  public get height(): number {
+    return this.dimensions.y
+  }
+
+  public get tiles(): TileObject[] {
+    return this._tiles
+  }
+
+  public initialize() {
+    for (const tile of this._tiles) {
+      tile.initialize()
       }
+      this.process()
+  }
+
+  public process() {
+    calculateBitmask(this)
+  }
+
+  public update(delta: number) {
+    for (const tile of this._tiles) {
+      tile.update(delta)
     }
+  }
+
+  public getTile(position: Vector2D) {
+    return this._tiles[position.y * this.dimensions.x + position.x]
+  }
   
-    public getTile(position: Vector2D) {
-      return this._tiles[position.y * this.dimensions.x + position.x]
-    }
+  public getAllTiles() {
+    return this._tiles
+  }
   
-    public setTile(position: Vector2D, tile: Tile) {
-      const sprite = this.tileset.getTileImage(tile.appearance?.sprite as string)
-      this._tiles[position.y * this.dimensions.x + position.x] = new TileObject(new Vector2D(position.x, position.y), { ...tile}, sprite)
-    }
-  
+  public setTile(position: Vector2D, tile: Tile) {
+    const sprite = this.tileset.getTileImage(tile.appearance?.sprite as string)
+    this._tiles[position.y * this.dimensions.x + position.x] = new TileObject(new Vector2D(position.x, position.y), { ...tile}, sprite)
+  }
+
   public setTiles(tiles: TileObject[]) {
     this._tiles = tiles
   }

@@ -1,17 +1,55 @@
-import { makeSurface,  type Viewport } from "@engine/render";
+
 import { Color, Vector2D } from "@engine/utils";
-import { Blank_Tile, type GameMap } from "@modules/map";
+// import { Blank_Tile } from "@modules/map";
 import type { Tile } from "@modules/tiles";
 import { MouseHandler, useMouseHandler, type MouseState, type Position } from "@engine/input/mouse"
+import type { GameMapRW as GameMap } from "@modules/rewrites/map";
+import type { TileSprite } from "@modules/rewrites/tiles/tile";
+import { Surface, type IRenderable } from "@modules/rewrites/render/surface";
+import { SurfaceLayers } from "@modules/rewrites/render/surfaceLayers";
+import { Viewport } from "@modules/rewrites/render/viewport";
 
+
+class GridElement implements IRenderable {
+  dimensions: Vector2D
+  size: Vector2D
+  private _grid: HTMLCanvasElement | undefined
+
+  constructor(size: Vector2D, dimensions: Vector2D) {
+    this.dimensions = dimensions
+    this.size = size
+  }
+  render(surface: Surface) {
+    if (!this._grid) this._grid = drawGrid(this.dimensions.x, this.dimensions.y, this.size.x, this.size.y)
+
+    surface.drawAlpha(this._grid, new Vector2D(0, 0), 1, 0.5)
+  }
+}
+
+class MapTileViewer implements IRenderable {
+  constructor(private tiles: TileSprite[]) { }
+  render(surface: Surface) {
+    this.tiles.forEach((tile) => tile.render(surface))
+    return surface
+  }
+}
 
 export class MapViewScreen {
   private _lastUpdate: number = 0
   private _activeTile: Tile | null = null
   private mouse: MouseHandler
-  update(_: number) {
 
-    this.render()
+  constructor(public screen: Viewport, public map: GameMap) {
+    this.mouse = useMouseHandler()
+  }
+  update(_: number) {
+    this.screen.render()
+
+    window.requestAnimationFrame((timeStamp) => {
+      const delta = timeStamp - this._lastUpdate
+      this._lastUpdate = timeStamp
+      this.update(delta)
+    })
     return this
   }
 
@@ -20,14 +58,14 @@ export class MapViewScreen {
 
     const lockedPos = getlockedPos(this.mouse.mousePos, 16)
 
-    if (state.rightMouse) {
-        this.map.tiles.setTile(lockedPos, { ...Blank_Tile})
-    } else {
-        this.map.tiles.setTile(lockedPos, this.activeTile)
-    }
+    // if (state.rightMouse) {
+    //     this.map.tiles.setTile(lockedPos, { ...Blank_Tile})
+    // } else {
+    //     this.map.tiles.setTile(lockedPos, this.activeTile)
+    // }
   }
 
-  public set activeTile(tile: Tile) {
+  public setActiveTile(tile: Tile | null) {
     this._activeTile = tile
   }
 
@@ -35,47 +73,39 @@ export class MapViewScreen {
     return this._activeTile
   }
 
-  public render() {
-    this.screen.clear()
+  public setMap(map: GameMap) {
+    this.map = map
+    this.screen.layers.uiLayer.elements.clear()
+    this.screen.layers.tileLayer.elements.clear()
 
-    const grid = drawGrid(this.map.width, this.map.height, 16, 16)
-    this.screen.drawAlpha(grid, 0, 0, 1, 0.5)
+    const gridElement = new GridElement(new Vector2D(16, 16), new Vector2D(map.width, map.height))
+    this.screen.layers.uiLayer.elements.add(gridElement)
 
-    if (this.map.tiles) {
-        const map = drawMap(this.map)
-        this.screen.drawAlpha(map, 0, 0, 1, 0)
-    }
-
-    if (this.mouse.available) {
-      const lockedCoords = getlockedPos(this.mouse.mousePos, 16)
-      drawMouse(new Vector2D(lockedCoords.x * 16, lockedCoords.y * 16), this.screen)
-      drawMouseCoords(lockedCoords, this.screen)
-    }
-
-
-    window.requestAnimationFrame((timeStamp) => {
-      const delta = timeStamp - this._lastUpdate
-      this._lastUpdate = timeStamp
-      this.update(delta)
-    })
+    const mapViewer = new MapTileViewer(map.getTileMap())
+    this.screen.layers.tileLayer.elements.add(mapViewer)
   }
 
+  public initialize(elem?: HTMLElement) {
+    this.screen.initialize(elem)
 
-  public start() {
-    this.mouse.init(this.screen.surface.canvas)
-    this.mouse.onMouseDown((state) => {
+    const surface = this.screen.getSurface()
+
+    if (surface) {
+      this.mouse.init(surface.canvas)
+      this.mouse.onMouseDown((state) => {
       this.handleMouseDown(state)
     })
-    this.render()
+    }
   }
 
-  constructor(public screen: Viewport, public map: GameMap) {
-    this.mouse = useMouseHandler()
+  public start() {
+
+    this.update(0)
   }
 }
 
 function drawGrid(width: number, height: number, tileWidth: number, tileHeight: number): HTMLCanvasElement {
-    const surface = makeSurface(width * tileWidth, height * tileHeight)
+    const surface = Surface.makeSurface(width * tileWidth, height * tileHeight)
     const ctx = surface.context
     ctx.strokeStyle = 'rgba(255,255,255)'
 
@@ -96,41 +126,48 @@ function drawGrid(width: number, height: number, tileWidth: number, tileHeight: 
     return surface.canvas
 }
 
-function drawMap(map: GameMap): HTMLCanvasElement {
-  const tileWidth = 16
-  const tileHeight = 16
+// function drawMap(map: GameMap): HTMLCanvasElement {
+//   const tileWidth = 16
+//   const tileHeight = 16
 
-  const surface = makeSurface(map.width * tileWidth, map.height * tileHeight)
+//   const surface = makeSurface(map.width * tileWidth, map.height * tileHeight)
 
-  map.tiles.tiles.forEach((tile, index) => {
-    if (!tile.sprite) return
+//   map.tiles.tiles.forEach((tile, index) => {
+//     if (!tile.sprite) return
 
-    const tileImage = tile.sprite
-    if(!tileImage) return
-    const x = (index % map.width) * tileWidth
-    const y = Math.floor(index / map.width) * tileHeight
-    surface.draw(tileImage, new Vector2D(x, y))
-  })
+//     const tileImage = tile.sprite
+//     if(!tileImage) return
+//     const x = (index % map.width) * tileWidth
+//     const y = Math.floor(index / map.width) * tileHeight
+//     surface.draw(tileImage, new Vector2D(x, y))
+//   })
 
-  return surface.canvas
-}
-
-
-function drawMouse(position: Position, screen: Viewport) {
-  screen.surface.context.strokeStyle = 'red'
-  screen.surface.context.strokeRect(position.x, position.y, 16, 16)
-}
+//   return surface.canvas
+// }
 
 
-const drawMouseCoords = (coords: Position, screen: Viewport) => {
-  const height = screen.surface.canvas.height
+// function drawMouse(position: Position, screen: Viewport) {
+//   screen.surface.context.strokeStyle = 'red'
+//   screen.surface.context.strokeRect(position.x, position.y, 16, 16)
+// }
 
-  screen.surface.drawText(`${coords.x}, ${coords.y}`, new Vector2D(16, height - 20), new Color(255, 255, 255), 16)
-}
+
+// const drawMouseCoords = (coords: Position, screen: Viewport) => {
+//   const height = screen.surface.canvas.height
+
+//   screen.surface.drawText(`${coords.x}, ${coords.y}`, new Vector2D(16, height - 20), new Color(255, 255, 255), 16)
+// }
 
 function getlockedPos(pos: Position, factor: number): Position {
     return {
         x: Math.floor((pos.x + 3) / factor),
         y: Math.floor((pos.y + 3) / factor)
     }
+}
+
+export function useMapView(width: number, height: number, map: GameMap) {
+  const resolution = new Vector2D(width, height)
+  const layers = new SurfaceLayers(resolution)
+  const screen = new Viewport(resolution, layers)
+  return new MapViewScreen(screen, map)
 }

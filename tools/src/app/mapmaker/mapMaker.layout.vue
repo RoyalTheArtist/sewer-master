@@ -1,32 +1,24 @@
 <script setup lang="ts">
 import FileInput from '../../components/fileInput.vue'
-import { useRouter } from 'vue-router';
-import { GameMap, loadMapFromFile } from '@modules/map';
 import MapMakerPage from './MapMakerPage.vue';
 import { ref } from 'vue';
-import type { TileSet } from '@modules/assets/tiles';
-import { Vector2D } from '@engine/utils';
-import { createEmptyMap } from "@modules/map/map.utils";
-
-const router = useRouter()
+import { generateEmptyMap, generateMap } from '@modules/rewrites/utils';
+import type { GameMapRW as GameMap, MapGenerationData } from '@modules/rewrites/map';
+import { handleLoad } from '@modules/utils/files';
 
 const map = ref<GameMap | null>(null)
-const tileset = ref<TileSet | null>(null)
 
 const loadMap = async (event: Event) => {
-  //const load = await handleLoad<MapLoadData>(event.target as HTMLInputElement)
+  const input = event.target as HTMLInputElement
+  if (!input.files) throw new Error('No file selected')
+  const load = await handleLoad<MapGenerationData>(input.files[0] as File)
 
-  //const mapData = load.value
-  const mapData = await loadMapFromFile(event.target as HTMLInputElement)
-  console.info(mapData)
-
-  map.value = mapData.map
-  tileset.value = mapData.tileset
+  map.value = await generateMap(load.value)
 }
 
 const newMap = () => {
-  map.value = createEmptyMap(new Vector2D(10, 10));
-  tileset.value = null
+  const mapTest = generateEmptyMap(25, 25)
+  map.value = mapTest
 }
 
 // NOTE TO SELF
@@ -54,5 +46,5 @@ const newMap = () => {
       <!-- <button type="button" @click="loadMapFS">Load Map</button> -->
       <file-input label="Load" @change="loadMap" accept=".json,text/json" ></file-input>
     </section>
-    <map-maker-page v-if="map" :map="map" :tileset="tileset"></map-maker-page>
+    <map-maker-page v-if="map" :map="map"></map-maker-page>
 </template>

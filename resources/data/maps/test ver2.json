@@ -1,0 +1,56 @@
+{
+    "meta": {
+        "name": "Test Map",
+        "size": [10, 10],
+        "spritesheet": "data/spritesheets/dungeon.json"
+    },
+    "terrain": {
+        "tileset": {
+            "tiles": [
+                {
+                    "name": "floor",
+                    "passable": true,
+                    "transparent": true,
+                    "appearance": {
+                        "name": "floor",
+                        "resource": "assets/images/dungeon_sewers_002.png",
+                        "sprite": "floor",
+                        "looksLike": "floor"
+                    }
+                },
+                {
+                    "name": "brick",
+                    "passable": false,
+                    "transparent": false,
+                    "appearance": {
+                        "name": "brick",
+                        "resource": "assets/images/dungeon_sewers_002.png",
+                        "sprite": "brick",
+                        "looksLike": "brick"
+                    }
+                }
+            ],
+            "tilemap": {
+                "resource": "assets/images/dungeon_sewers_002.png",
+                "size": [16, 16],
+                "atlas": {
+                    "floor": [3, 0],
+                    "brick": [1, 0]
+                }
+            }
+        },
+        "layout": [
+            1, 1, 0, 1, 1, 1, 1, 1, 1, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+        ]
+    },
+    "entities": []
+}

@@ -1,36 +1,30 @@
 <script setup lang="ts">
-import { GameMap } from "@modules/map"
-import { makeViewport } from "@engine/render"
 import { onMounted, useTemplateRef, watch } from "vue";
-import { MapViewScreen } from "../mapViewScreen";
+import { useMapView } from "../mapViewScreen";
 import type { Tile } from "@modules/tiles";
+import type { GameMapRW as GameMap} from "@modules/rewrites/map";
 
-const props = defineProps<{ map: GameMap, activeTile: Tile }>()
-
-const viewPort = makeViewport(800, 600)
-
+const props = defineProps<{ map:GameMap, activeTile: Tile | null }>()
 const mapViewContainer = useTemplateRef('map-view')
-viewPort.setResolution(800, 600)
-
-const mapViewScreen = new MapViewScreen(viewPort, props.map)
+const mapView = useMapView(800, 600, props.map)
 
 onMounted(() => {
-  if (!mapViewContainer.value) return
-  mapViewContainer.value.appendChild(viewPort.surface.canvas)
-  mapViewScreen.start()
+  mapView.initialize(mapViewContainer.value as HTMLElement)
+  mapView.setMap(props.map)
+  mapView.start()
 })
 
 watch(
   () => props.map,
   () => {
-    mapViewScreen.map = props.map
+    mapView.setMap(props.map)
   }
 )
 
 watch(
   () => props.activeTile,
   () => {
-    mapViewScreen.activeTile = props.activeTile
+    mapView.setActiveTile(props.activeTile)
   }
 )
 </script>

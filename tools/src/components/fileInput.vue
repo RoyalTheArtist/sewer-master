@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getFileInputAs } from '@modules/utils/files';
+import { handleLoad } from '@modules/utils/files';
 import { ref, useTemplateRef } from 'vue'
 
 defineOptions({

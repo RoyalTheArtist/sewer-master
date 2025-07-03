@@ -1,20 +1,25 @@
 <script setup lang="ts">
-import type { TileSet } from '@modules/assets/tiles';
 import TileBench from './TilesBench.vue';
 import { computed, ref } from 'vue';
 import type { Tile } from '@modules/tiles';
+import type { TileMap, TileSprite } from '@modules/rewrites/tiles/tile';
 
 const emit = defineEmits<{ (e: 'tile:selected', tile: Tile): void }>();
 
-const props = defineProps<{ tileset: TileSet }>()
+const props = defineProps<{ tileMap: TileMap }>()
 
-const previewImg = computed(() => props.tileset.spritesheet.texture.image)
+const previewImg = computed(() => props.tileMap.spritesheet.texture.image)
 
-const activeTile = ref<Tile | null>(null)
+const activeTile = ref<TileSprite | null>(null)
 
-const activeTileImg = computed(() => activeTile.value ? props.tileset.getTileImage(activeTile.value.appearance?.sprite || '') : null)
+const activeTileImg = computed(() => {
+  if (!activeTile.value) return null
 
-const handleTileSelected = (tile: Tile) => {
+  if (!activeTile.value.sprite) return null
+
+  return activeTile.value.sprite.img
+})
+const handleTileSelected = (tile: TileSprite) => {
   activeTile.value = tile
   emit('tile:selected', tile)
 }
@@ -28,13 +33,13 @@ const handleTileSelected = (tile: Tile) => {
       </header>
       <section class="card-body" >
             <div v-if="previewImg" class="preview" ref="preview">
-            <img :src="previewImg.src" alt="preview">
-          </div>
+              <img :src="(previewImg as HTMLImageElement).src" alt="preview">
+            </div>
          <label for="width">Width
-          <input type="number" :value="tileset.spritesheet.width" name="width">
+          <input type="number" :value="tileMap.size[0]" name="width">
         </label>
         <label for="height">Height
-          <input type="number" :value="tileset.spritesheet.height" name="height">
+          <input type="number" :value="tileMap.size[1]" name="height">
         </label>
       </section>
     </div>
@@ -52,15 +57,15 @@ const handleTileSelected = (tile: Tile) => {
         </label>
         <label for="passable" class="checkbox-label">
           Passable
-          <input type="checkbox" name="passable">
+          <input type="checkbox" name="passable" :checked="activeTile.passable">
         </label>
         <label for="passable" class="checkbox-label">
           Transparent
-          <input type="checkbox" name="transparent"></label>
+          <input type="checkbox" name="transparent" :checked="activeTile.transparent"></label>
       </section>
     </div>
     <tile-bench class="card flex-grow-2"
-      :tileset="tileset"
+      :tile-map="tileMap" id="tileset"
       @tile:selected="handleTileSelected"
       ></tile-bench>
   </main>
