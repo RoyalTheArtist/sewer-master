@@ -4,11 +4,12 @@ import { SurfaceLayer, ViewportSimple } from "@engine/render"
 import { BaseScreen } from "@engine/screen.base"
 import { Color, Vector2D } from "@engine/utils"
 
-import { Settings } from "@/apps/settings"
+import { Settings } from "@/settings"
 
 import { TestScreen } from "@/screens/testScreen"
 import { IRenderable, Surface } from "@engine/render/surface"
 import { Engine } from "@engine/engine"
+import { GraphicsRenderSystem } from "@engine/render/system"
 
 const mapDataOne = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -64,7 +65,11 @@ export class MainMenuScreen extends BaseScreen {
     loading: boolean = false
     initialize(engine: Engine): BaseScreen {
         const drawMainMenu = new DrawMainMenu()
-        engine.viewport.layers.uiLayer.addElement(drawMainMenu)
+
+        if (engine.render instanceof GraphicsRenderSystem) {
+            engine.render.addToUILayer(drawMainMenu)
+        }
+        
         return this
     }
     update(_delta: number) {

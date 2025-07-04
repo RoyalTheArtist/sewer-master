@@ -9,6 +9,9 @@ export class Position extends Component {
         super();
         this.position = position
     }
+
+    public get x() { return this.position.x }
+    public get y() { return this.position.y }
 }
 
 export class BlocksMovement extends Component {}

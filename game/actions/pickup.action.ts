@@ -2,8 +2,8 @@ import { Action } from "./moveActions"
 
 import { Entity } from "@engine/ecs"
 import { ImpossibleException } from "@engine/utils/exceptions"
-import { Actor, } from "@modules/actors"
-import { Inventory } from "@modules/actors/actors.components"
+import { Actor, } from "@modules/actors/actors"
+import { Inventory } from "@modules/actors/components/inventory"
 
 export class PickupAction extends Action {
     canPerform(): {} {

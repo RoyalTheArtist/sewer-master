@@ -2,7 +2,7 @@ import { Vector2D } from "@engine/utils"
 import { GameMap, type MapGenerationData } from "./map"
 import { Tile, TileMap, TileSet, type TileData, type TilesetData } from "../rewrites/tiles/tile"
 import { Texture } from "@engine/render/graphics/texture"
-import { SpriteSheet } from "@engine/render/graphics/sprite"
+import { SpriteSheet } from "@engine/render/graphics/spritesheet"
 
 const BLANK_TILE: TileData = {
     name: 'blank',

@@ -5,7 +5,7 @@ import { Tile } from "@modules/tiles"
 import { App, } from "../app.base"
 import { MapMaker } from "./mapmaker"
 import { useMouseHandler } from "@engine/input/mouse"
-import { TileSet } from "../../../modules/assets/tiles"
+import { TileSet } from "../../modules/assets/tiles"
 
 
 

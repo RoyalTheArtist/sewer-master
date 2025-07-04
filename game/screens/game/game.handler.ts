@@ -1,9 +1,9 @@
-import { Action, BumpAction } from "../../../actions"
+import { Action, BumpAction } from "../../actions"
 import { StandardGameInput } from "@engine/input"
 import { Vector2D } from "@engine/utils"
 
-import { InputHandler } from "@/apps/handler.base"
-import { Player } from "@/apps/player"
+import { InputHandler } from "@/handler.base"
+import { Player } from "@/player"
 import { PickupAction } from "@game/actions/pickupActions"
 
 export class GameInputHandler extends InputHandler { 

@@ -27,5 +27,5 @@
     }
   },
   "include": ["game", "vite.config.ts", "bt-engine/render", "modules/components.ts", "modules/assets/tiles.ts"],
-  "exclude": ["game/apps/mapmaker"]
+  "exclude": ["game/mapmaker"]
 }

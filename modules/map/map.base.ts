@@ -70,7 +70,7 @@ export class GameMapOld extends Entity implements IInitialize {
   }
 
   addActor(entity: Actor) {
-    entity.parent = this
+    //entity.parent = this
     this._entities.add(entity)
     this._activeActors.add(entity)
   }

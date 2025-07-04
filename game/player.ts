@@ -1,11 +1,11 @@
-import { Actor } from "@modules/actors"
-import { Action, NoAction } from '../actions'
+import { Actor } from "@modules/actors/actors"
+import { Action, NoAction } from './actions'
 import { Vector2D } from "@engine/utils"
 import { Position } from "@modules/components"
-import { ActorAppearance } from "@modules/actors/actors.components"
+import { ActorAppearance } from "@modules/actors/components/appearance"
 import { Fighter } from "@modules/combat/fighter"
 import { BlocksMovement } from "@/lib/components"
-import { AI } from "../ai"
+import { Active, AI } from "./ai"
 
 export class Player {
     private static _nextTurn: Action | null = null
@@ -36,7 +36,7 @@ export class Player {
 }
 
 export class PlayerAI extends AI {
-
+    constructor(public parent: Actor) { super() }
     public initialize() { }
     public update(_delta: number) {
     }
@@ -55,9 +55,13 @@ export const spawnPlayer = (position: Vector2D) => {
     player.name = "You"
     player.initialize()
     player.addComponent(new PlayerAI(player))
-    player.addComponent(new ActorAppearance({ shape: "circle", resource: "sewers", sprite: "adventurer" }))
+    player.addComponent(new ActorAppearance("adventurer",{ 
+            resource: "assets/images/dungeon_sewers_002.png",
+            size: [16, 16]
+         }, [1, 1]))
     player.addComponent(new Position(position))
     player.addComponent(new Fighter(100))
     player.addComponent(new BlocksMovement)
+    player.addComponent(new Active())
     return player
 }

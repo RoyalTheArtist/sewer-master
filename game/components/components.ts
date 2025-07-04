@@ -1,12 +1,3 @@
-import type { Component } from "@engine/ecs";
-
-export interface Appearance extends Component {  
-  name: string,
-  resource: string,
-  sprite: string,
-  looksLike: string
-}
-
 export class SpriteAppearance {
   type = "sprite"
   resource: string

@@ -38,38 +38,64 @@ export interface MapLoadData {
 }
 
 export class GameMap implements BaseMap {
-    name: string
-    size: Vector2D
-    tiles: Tile[]
-    tileMap: TileMap | undefined
-    
-    constructor(name: string, size: Vector2D, tileMap?: TileMap) {
-      this.name = name
-      this.size = size
-      this.tiles = new Array(size.x * size.y)
-      this.tileMap = tileMap
-    }
+  public name: string
+  private _size: Vector2D
+  private _tiles: Tile[]
+  private tileMap: TileMap | undefined
+  private _entities: Set<Entity>
   
-    public get width(): number {
-      return this.size.x
-    }
-    
-    public get height(): number {
-      return this.size.y
-    }
-        
-    public setTile(index: number, tile: Tile) {
-      this.tiles[index] = tile
-      return this
-    }
+  constructor(name: string, size: Vector2D, tileMap?: TileMap) {
+    this.name = name
+    this._size = size
+    this._tiles = new Array(size.x * size.y)
+    this.tileMap = tileMap
+    this._entities = new Set()
+  }
+  
+  public get size(): Vector2D {
+      return this._size
+  }
 
-    public setTiles(tiles: Tile[]) {
-      this.tiles = tiles
-      return this
-   }
+  public set size(size: Vector2D) {
+    this._size = size
+  }
+  
+  public get tiles(): Tile[] {
+    return this._tiles
+  }
+
+  public set tiles(tiles: Tile[]) {
+    this._tiles = tiles
+  }
+
+  public get width(): number {
+    return this.size.x
+  }
+  
+  public get height(): number {
+    return this.size.y
+  }
+      
+  public setTile(index: number, tile: Tile) {
+    this.tiles[index] = tile
+    return this
+  }
+
+  public setTiles(tiles: Tile[]) {
+    this.tiles = tiles
+    return this
+  }
   
   public getTileMap(): TileSprite[] {
       if (!this.tileMap) return []
       return this.tileMap.getMapSprites(this.tiles, this.size.x, this.size.y)
-    }
+  }
+
+  public addEntity(entity: Entity) {
+    this._entities.add(entity)
+  }
+
+  public getEntities(): Set<Entity> {
+    return this._entities
+  }
 }
