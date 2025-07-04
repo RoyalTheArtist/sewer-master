@@ -1,5 +1,5 @@
 
-import { SpriteSheet } from "@engine/graphics";
+import { SpriteSheet } from "@engine/render/graphics/spritesheet";
 
 async function fetchJson<T>(resource: string): Promise<T> { 
     try {
@@ -41,18 +41,18 @@ export class AssetLoader {
     public static set baseUrl(url: string) {
         this._baseUrl = url
     }
-    public static async loadSpritesheet(resource: string, atlas: Record<string, [number, number]>) {
-        const spriteJSON = await fetchJson<ISpriteSheetData>(this.baseUrl + resource)
-        if (!spriteJSON) throw new Error('Resource not found')
+    // public static async loadSpritesheet(resource: string, atlas: Record<string, [number, number]>) {
+    //     const spriteJSON = await fetchJson<ISpriteSheetData>(this.baseUrl + resource)
+    //     if (!spriteJSON) throw new Error('Resource not found')
         
-        const spritesheet = SpriteSheet.from(spriteJSON)
-        this.spritesheets.set(resource, spritesheet)
-        return spritesheet
-    }
+    //     const spritesheet = SpriteSheet.from(spriteJSON)
+    //     this.spritesheets.set(resource, spritesheet)
+    //     return spritesheet
+    // }
 
-    public static async loadTileSet(resource: string) {
-        const manifest = await fetchJson<TileSetLoadData>(this.baseUrl + resource)
-        console.info(manifest)
-        const spriteSheet = await AssetLoader.loadSpritesheet(manifest.spritesheet.resource)
-    }
+    // public static async loadTileSet(resource: string) {
+    //     const manifest = await fetchJson<TileSetLoadData>(this.baseUrl + resource)
+    //     console.info(manifest)
+    //     const spriteSheet = await AssetLoader.loadSpritesheet(manifest.spritesheet.resource)
+    // }
 }

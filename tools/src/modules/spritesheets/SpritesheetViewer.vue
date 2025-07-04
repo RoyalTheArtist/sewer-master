@@ -3,7 +3,7 @@ import { makeSurface, Surface } from '@engine/render';
 import {  Rect, Vector2D } from '@engine/utils';
 import { onMounted, onUnmounted, useTemplateRef, watch } from 'vue';
 
-import { Colors } from '@engine/graphics/colors'
+import { Colors } from '@engine/render/graphics/colors'
 import { MouseHandler } from '@engine/input/mouse';
 
 const target = useTemplateRef('target')

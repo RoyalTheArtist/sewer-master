@@ -1,14 +1,14 @@
-import { GraphicObject } from "@engine/graphics"
+import { GraphicsObject } from "@engine/render/graphics/base"
 import { SurfaceLayer } from "@engine/render"
 import { Entity } from "@engine/ecs"
-import { RenderAnimation } from "@engine/graphics/animations"
+import { RenderAnimation } from "@engine/render/graphics/animations"
 import { Vector2D } from "@engine/utils"
 
 export class MoveSpriteAnimation extends RenderAnimation {
     private counter: number = 0
     private increment: {x: number, y: number}
 
-    private graphicsObject: GraphicObject | null = null
+    private graphicsObject: GraphicsObject | null = null
     constructor(public readonly entity: Entity, public readonly from: Vector2D, public readonly to: Vector2D, public readonly duration: number = 100,) {
         super()
         this.increment = {
