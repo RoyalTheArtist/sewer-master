@@ -98,6 +98,7 @@ export class TileSprite extends Tile {
 export interface BaseTileMap {
   tileset: TileSet
   spritesheet: SpriteSheet
+  tiles: TileSprite[]
 
   getTileSprite(tile: Tile): Sprite | undefined
   getMapSprites(layout: Tile[], width: number, height: number): TileSprite[]
@@ -116,6 +117,10 @@ export class TileMap implements BaseTileMap {
     this.size = data.size
 
     this.atlas = new Map(Object.entries(data.atlas))
+  }
+
+  public get tiles() {
+    return this.getMapSprites(this.tileset.tiles, this.size[0], this.size[1])
   }
 
   getTileSprite(tile: Tile): Sprite | undefined {

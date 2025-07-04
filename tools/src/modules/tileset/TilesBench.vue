@@ -16,7 +16,7 @@ const tilesForView = computed(() => {
   const tilesForView = props.tileMap.tiles
     .map(tile => ({
         tile: tile,
-        img: tile.sprite?.img || undefined
+        img: tile.graphic?.getSprite()?.img || undefined
       }))
   return tilesForView
 })

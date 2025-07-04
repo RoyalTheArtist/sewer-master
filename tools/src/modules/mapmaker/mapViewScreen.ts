@@ -86,7 +86,9 @@ export class MapViewScreen {
   }
 
   public initialize(elem?: HTMLElement) {
-    this.screen.initialize(elem)
+    if (elem) {
+      this.screen.attachTo(elem)
+    }
 
     const surface = this.screen.getSurface()
 
