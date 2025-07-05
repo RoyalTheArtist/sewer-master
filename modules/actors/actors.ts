@@ -10,6 +10,7 @@ import { Inventory } from "./components/inventory";
 import { AnimationManager } from "@engine/render/graphics/animations";
 import { Active, AI, selectAI } from "../../game/ai";
 import { Fighter } from "../combat/fighter";
+import { EventSystem } from "@/eventSystem";
 
 
 const TILE_SIZE = Settings.tiles.size
@@ -60,6 +61,11 @@ export class Actor extends Entity {
         return this
     }
 
+    public setPosition(x: number, y: number) {
+        this.getComponent<Position>(Position).position = new Vector2D(x, y)
+        return this
+    }
+
     public addAppearance(looksLike: string, spritesheet: { resource: string, size: [number, number] }, dimensions: [number, number]) {
         this.addComponent(new ActorAppearance(looksLike, spritesheet, dimensions));
         return this
@@ -82,12 +88,10 @@ export class Actor extends Entity {
     public moveTo(direction: Vector2D) {
         const entityPos = this.getComponent<Position>(Position)
         const newPosition = new Vector2D(entityPos.position.x + direction.x, entityPos.position.y + direction.y)
-        const curTilePos = new Vector2D(entityPos.position.x * TILE_SIZE.x, Math.floor(entityPos.position.y * TILE_SIZE.y))
-        const nextTilePos = new Vector2D(Math.floor(newPosition.x * TILE_SIZE.x), Math.floor(newPosition.y * TILE_SIZE.y))
 
-        AnimationManager.triggerAnimation(new MoveSpriteAnimation(this, curTilePos, nextTilePos, 100))
         entityPos.position = newPosition
-        //this.position = newPosition
+        EventSystem.emit('entity:moved', { entity: this, from: entityPos, to: newPosition })
+        this.setPosition(newPosition.x, newPosition.y)
     }
 
     static spawnRat(position: Vector2D) {

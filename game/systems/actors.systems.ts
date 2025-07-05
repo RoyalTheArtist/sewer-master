@@ -24,9 +24,9 @@ export class TurnSystem extends System {
             this.currentTurn = first
         }
 
-        const action = this.currentTurn?.perform(this.currentTurn.parent)
+        const action = this.currentTurn?.perform(this.currentTurn.parent as Actor)
 
-        if (action && !(action instanceof NoAction) && action.canPerform(this.currentTurn.parent)) {
+        if (action && !(action instanceof NoAction) && action.canPerform(this.currentTurn.parent as Actor)) {
             ActionQueue.addAction(this.currentTurn.parent as Actor, action, 135)
             this.queue.delete(this.currentTurn)
             this.tookTurn.add(this.currentTurn)
@@ -38,5 +38,7 @@ export class TurnSystem extends System {
             this.queue = new Set(this.tookTurn)
             this.tookTurn = new Set()
         }
+
+        ActionQueue.processActions(_delta)
     }
 }

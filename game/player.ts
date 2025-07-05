@@ -43,8 +43,11 @@ export class PlayerAI extends AI {
     public perform(): Action {
         if (Player.nextTurn) {
             const action = Player.nextTurn
-            Player.setNextTurn(null)
-            return action
+            const canPerform = action.canPerform(this.parent)
+            if (canPerform) {
+                Player.setNextTurn(null)
+                return action
+            }
         }
         return new NoAction()
     }

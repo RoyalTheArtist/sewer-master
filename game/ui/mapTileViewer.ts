@@ -7,6 +7,9 @@ import { SpriteSheet } from "@engine/render/graphics/spritesheet"
 import { ActorAppearance } from "@modules/actors/components/appearance"
 import { Position } from "@modules/components"
 import { GraphicsObject } from "@engine/render/graphics/base"
+import { EventSystem } from "@/eventSystem"
+import { AnimationManager } from "@engine/render/graphics/animations"
+import { MoveGraphicsAnimation, MoveSpriteAnimation } from "@modules/animations"
 
 
 export class MapTileViewer implements IRenderable {
@@ -32,9 +35,25 @@ export class MapTileViewer implements IRenderable {
 export class MapEntityViewer implements IRenderable {
     private _graphics: Map<Entity,GraphicsObject> = new Map()
 
-    constructor() { }
-
+    constructor() {
+        EventSystem.on('entity:moved', this.handleMovedEntity)
+    }
     get graphics() { return this._graphics }
+
+
+
+    public handleMovedEntity = (args: any) => {
+        const { entity, to, from } = args
+        console.info('entity moved', { entity, to, from })
+
+        const graphic = this._graphics.get(entity)
+        if (!graphic) return
+
+        const curTilePos = new Vector2D(graphic.position.x, graphic.position.y)
+        const nextTilePos = new Vector2D(to.x * 16, to.y * 16)
+
+        AnimationManager.triggerAnimation(new MoveGraphicsAnimation(graphic, nextTilePos, curTilePos, 100))
+    }
 
     render(surface: Surface) {
         this.graphics.forEach((graphics) => graphics.render(surface))

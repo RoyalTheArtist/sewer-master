@@ -1,6 +1,8 @@
 import type { Entity } from '@engine/ecs/entity'
+import { Position } from '../components'
 import type { Vector2D } from '@engine/utils'
 import { Tile, TileMap, TileSprite, type TilesetData } from '@modules/rewrites/tiles/tile'
+import { BlocksMovement } from '@/lib/components'
 
 interface BaseMap {
   name: string,
@@ -85,6 +87,39 @@ export class GameMap implements BaseMap {
     this.tiles = tiles
     return this
   }
+
+  public getTile(x: number, y: number) {
+    return this.tiles[y * this.size.x + x]
+  }
+
+    findEntity(position: Vector2D) {
+      for (const entity of this._entities) {
+        const positionComponent = entity.getComponent<Position>(Position)
+        if (positionComponent.position.x === position.x && positionComponent.position.y === position.y) {
+          return entity
+        }
+      }
+      return null
+    }
+
+  isWalkable(position: Vector2D) {
+    const tile = this.getTile(position.x, position.y)
+    if (tile) {
+      return tile.passable
+    } 
+    return true
+  }
+
+  isInBounds(position: Vector2D) {
+    return position.x >= 0 && position.x < this.width && position.y >= 0 && position.y < this.width
+  }
+
+   entityBlocks(position: Vector2D) {
+      const entity = this.findEntity(position)
+      if (entity) return true
+      return false
+    }
+  
   
   public getTileMap(): TileSprite[] {
       if (!this.tileMap) return []

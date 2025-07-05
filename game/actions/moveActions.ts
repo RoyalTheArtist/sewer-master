@@ -1,7 +1,8 @@
+import { EventSystem } from "@/eventSystem"
 import { Entity } from "@engine/ecs"
 
 import { ImpossibleException, Vector2D } from "@engine/utils"
-import { Actor } from "@modules/actors"
+import { Actor } from "@modules/actors/actors"
 import { TakeDamage } from "@modules/combat/fighter"
 
 export abstract class Action {
@@ -41,8 +42,10 @@ export class MoveAction extends Action {
     canPerform() {
         if (!this.requester || !this.requester.parent) return false
         const map = this.requester.parent
+
+        const entityBlocks = map.entityBlocks(this.moveTo)
         
-        return map.isWalkable(this.moveTo) && map.isInBounds(this.moveTo) && !map.entityBlocks(this.moveTo)
+        return map.isWalkable(this.moveTo) && map.isInBounds(this.moveTo) && !entityBlocks
      }
 }
 
@@ -74,7 +77,7 @@ export class BumpAction extends ActionWithDirection {
         const map = actor.parent
         if (!map) return false
         const destination = new Vector2D(actor.position.x + this.dest.x, actor.position.y + this.dest.y)
-        return map.isWalkable(destination) && map.isInBounds(destination)
+        return map.isWalkable(destination) && map.isInBounds(destination) && !map.entityBlocks(destination)
     }
     perform(entity: Actor) {
         if (!entity.parent) return new NoAction()

@@ -11,6 +11,10 @@ import { Vector2D } from "@engine/utils";
 import { Actor } from "@modules/actors/actors";
 import { Item } from "@modules/items";
 import { GraphicsRenderSystem } from "@engine/render/system";
+import { TurnSystem } from '@/systems/actors.systems';
+import { CombatSystem } from '@modules/combat/fighter';
+import { InputManager } from '@engine/input/inputManager';
+import { Settings } from '@/settings';
 
 
 const populateTestMap = (map: GameMap) => {
@@ -42,10 +46,12 @@ const loadMap = async function() {
         return map
     }
 
+const turnSystem = new TurnSystem()
+const combatSystem = new CombatSystem()
+
 export class TestScreen extends BaseScreen {
     private handler: InputHandler = new GameInputHandler()
     private _map: GameMap | null = null
-    private loading: boolean = false
     private tileViewer: MapTileViewer
     private entityViewer: MapEntityViewer
 
@@ -64,21 +70,18 @@ export class TestScreen extends BaseScreen {
     }
 
     async preload(): Promise<BaseScreen> {
-        this.loading = true
         const map = await loadMap()
         
         if (this.tileViewer) this.tileViewer.setTiles(map.getTileMap())
         if (this.entityViewer) this.entityViewer.setEntities(map.getEntities())
         
         this.map = map
-        this.loading = false
         this.ready = true
         return this
     }
 
     public initialize(engine: Engine): BaseScreen {
         engine.render.clear()
-
         
         if (engine.render instanceof GraphicsRenderSystem) {
             engine.render.addToTileLayer(this.tileViewer)
@@ -89,6 +92,11 @@ export class TestScreen extends BaseScreen {
     }
 
     public update(delta: number) {
+        const inputs = InputManager.getInputs(Settings.keyboardMappings.gameScreen)
+        this.handler.handleInput(inputs)
+
+        turnSystem.query(this.map?.getEntities() || new Set())
+        turnSystem.update(delta)
         return this
     }
 }
