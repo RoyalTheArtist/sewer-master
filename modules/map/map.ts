@@ -9,9 +9,13 @@ interface BaseMap {
   size: Vector2D,
   tiles: Tile[]
 
-  setTile(index: number, tile: Tile): BaseMap
-  setTiles(tiles: Tile[]): BaseMap
+  setTile(index: number, tile: Tile): this
+  setTiles(tiles: Tile[]): this
   getTileMap(): TileSprite[]
+  getTile(x: number, y: number): Tile
+  getTileAtPosition(position: Vector2D): Tile
+  isInBounds(position: Vector2D): boolean
+  isPassable(position: Vector2D): boolean
 }
 
 export interface MapGenerationData {
@@ -92,15 +96,19 @@ export class GameMap implements BaseMap {
     return this.tiles[y * this.size.x + x]
   }
 
-    findEntity(position: Vector2D) {
-      for (const entity of this._entities) {
-        const positionComponent = entity.getComponent<Position>(Position)
-        if (positionComponent.position.x === position.x && positionComponent.position.y === position.y) {
-          return entity
-        }
+  public getTileAtPosition(position: Vector2D) {
+    return this.getTile(position.x, position.y)
+  }
+
+  findEntity(position: Vector2D) {
+    for (const entity of this._entities) {
+      const positionComponent = entity.getComponent<Position>(Position)
+      if (positionComponent.position.x === position.x && positionComponent.position.y === position.y) {
+        return entity
       }
-      return null
     }
+    return null
+  }
 
   isWalkable(position: Vector2D) {
     const tile = this.getTile(position.x, position.y)
@@ -112,6 +120,14 @@ export class GameMap implements BaseMap {
 
   isInBounds(position: Vector2D) {
     return position.x >= 0 && position.x < this.width && position.y >= 0 && position.y < this.width
+  }
+
+  isPassable(position: Vector2D) {
+    const tile = this.getTile(position.x, position.y)
+    if (tile) {
+      return tile.passable
+    } 
+    return true
   }
 
    entityBlocks(position: Vector2D) {

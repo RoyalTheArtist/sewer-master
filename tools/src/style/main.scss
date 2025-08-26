@@ -2,6 +2,66 @@
 @import 'padding.scss';
 @import 'display.scss';
 
-body {
-    background-color: rgb(230, 225, 217);
+@font-face {
+    font-family: 'Basik8';
+    src: url('/resources/Baskic8.otf');
 }
+
+// https://www.fontspace.com/pixelated-elegance-font-f126145
+@font-face {
+    font-family: 'Pixel Elegance';
+    src: url('/resources/PixelatedEleganceRegular-ovyAA.ttf');
+}
+
+
+:root {
+    --color-orange: #ff8906;
+    --color-dark-blue: #0f0e17;
+    --color-pearl: #fffffe;
+    --color-grey: #a7a9be;
+    --color-black: black;
+    --color-salmon: #f25f4c;
+    --color-pink: #e53170;
+
+    --size-xs: 0.25rem;
+    --size-sm: 0.5rem;
+    --size-md: 1rem;
+    --size-lg: 2rem;
+    --size-xl: 4rem;
+}
+
+body {
+    background-color: var(--backgroundColor,rgb(230, 225, 217));
+    font-family: var(--font-family, sans-serif);
+}
+
+.theme-pixel {
+    --font-family: 'Pixel Elegance', 'Basik8','Pixelify Sans', sans-serif;
+    --color-primary: var(--color-dark-blue);
+    --color-accent: var(--color-orange);
+}
+
+
+button, .theme-btn {
+    border: 2px solid var(--color-primary);
+    color: var(--color-pearl);
+    padding: var(--size-xs) var(--size-sm);
+    background: var(--color-accent);
+    text-transform: uppercase;
+
+    &.filled {
+        background-color: var(--color-primary);
+        color: var(--color-pearl);
+    }
+}
+
+// button {
+//   padding: 6px 18px;
+//   background: transparent;
+//   border: 2px solid #fedf4d;
+//   font-family: inherit;
+//   color: #fedf4d;
+//   position: relative;
+//   margin-left: 5px;
+//   font-size: 1rem
+// }

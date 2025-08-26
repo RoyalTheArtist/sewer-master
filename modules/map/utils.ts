@@ -1,6 +1,6 @@
 import { Vector2D } from "@engine/utils"
 import { GameMap, type MapGenerationData } from "./map"
-import { Tile, TileMap, TileSet, type TileData, type TilesetData } from "../rewrites/tiles/tile"
+import { Tile, TileMap, TileSet, type TileData, type TilesetData } from "../tiles/tile"
 import { Texture } from "@engine/render/graphics/texture"
 import { SpriteSheet } from "@engine/render/graphics/spritesheet"
 
@@ -48,3 +48,4 @@ async function makeTileMap(tileset: TileSet, resource: string, size: [width: num
         return new TileMap(tileset, spritesheet, { atlas, size })
     }
 }
+

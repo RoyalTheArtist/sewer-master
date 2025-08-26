@@ -3,11 +3,11 @@ import { IInitialize } from "@engine/update.h"
 
 import { Tile, TileManager, TileObject } from "@modules/tiles"
 import { Vector2D } from "@engine/utils"
-import { Actor } from "../actors/actors"
-import { TurnSystem } from "../../game/systems/actors.systems"
-import { Position, BlocksMovement } from "../components"
-import { CombatSystem } from "../combat/fighter"
-import { Item } from "../items/items.base"
+import { Actor } from "../../actors/actors"
+import { TurnSystem } from "../../../game/systems/turnSystem"
+import { Position, BlocksMovement } from "../../components"
+import { CombatSystem } from "../../combat/fighter"
+import { Item } from "../../items/items.base"
 
 export interface IMapData {
   width: number

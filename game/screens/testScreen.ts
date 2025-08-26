@@ -1,5 +1,5 @@
 import { MapEntityViewer } from './../ui/mapTileViewer';
-import { InputHandler } from "@/handler.base";
+import { InputHandler } from "@/screens/inputHandler";
 import { GameInputHandler } from "@/screens/game/game.handler";
 import { Engine } from "@engine/engine";
 import { BaseScreen } from "@engine/screen.base";
@@ -11,7 +11,7 @@ import { Vector2D } from "@engine/utils";
 import { Actor } from "@modules/actors/actors";
 import { Item } from "@modules/items";
 import { GraphicsRenderSystem } from "@engine/render/system";
-import { TurnSystem } from '@/systems/actors.systems';
+import { TurnSystem } from '@/systems/turnSystem';
 import { CombatSystem } from '@modules/combat/fighter';
 import { InputManager } from '@engine/input/inputManager';
 import { Settings } from '@/settings';

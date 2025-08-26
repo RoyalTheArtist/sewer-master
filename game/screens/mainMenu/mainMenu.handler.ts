@@ -1,6 +1,6 @@
 import { NoAction } from "@modules/actors";
 import { StandardGameInput } from "@engine/input";
-import { InputHandler } from "@/handler.base";
+import { InputHandler } from "@/screens/inputHandler";
 
 export class MainMenuInputHandler extends InputHandler {
     handleInput(_input: StandardGameInput) {

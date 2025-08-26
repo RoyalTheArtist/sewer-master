@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { handleLoad } from '@modules/utils/files';
 import { ref, useTemplateRef } from 'vue'
+import AppButton from './AppButton.vue';
 
 defineOptions({
     inheritAttrs: false
@@ -22,7 +23,7 @@ const file = ref(null as File | null)
 
 <template>
     <slot name="activator" @click="onBrowse">
-      <button type="button" @click="onBrowse">{{props.label}}</button>
+      <app-button type="button" @click="onBrowse" :label="props.label"></app-button>
     </slot>
     <input type="file" ref="loadTiles" class="display-none" :accept="`${$attrs['accept']}`" @change="$attrs.onChange">
 

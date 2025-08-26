@@ -2,7 +2,7 @@ import { Action, BumpAction } from "../../actions"
 import { StandardGameInput } from "@engine/input"
 import { Vector2D } from "@engine/utils"
 
-import { InputHandler } from "@/handler.base"
+import { InputHandler } from "@/screens/inputHandler"
 import { Player } from "@/player"
 import { PickupAction } from "@game/actions/pickupActions"
 

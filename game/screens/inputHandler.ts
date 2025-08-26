@@ -1,4 +1,4 @@
-import { Action } from "@modules/actors"
+import { Action } from "../actions/moveActions"
 import { StandardGameInput } from "@engine/input"
 
 export abstract class InputHandler {
