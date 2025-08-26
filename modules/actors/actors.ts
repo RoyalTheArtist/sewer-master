@@ -3,12 +3,10 @@ import { Vector2D } from "@engine/utils";
 import { GameMap } from "@modules/map/map";
 import { Settings } from "@/settings";
 import { Position, BlocksMovement } from "../components";
-import { MoveSpriteAnimation } from "@modules/animations";
 
 import { ActorAppearance } from "./components/appearance";
 import { Inventory } from "./components/inventory";
-import { AnimationManager } from "@engine/render/graphics/animations";
-import { Active, AI, selectAI } from "../../game/ai/ai";
+import { Active, AI, PlayerAttackAI, selectAI } from "../../game/ai/ai";
 import { Fighter } from "../combat/fighter";
 import { EventSystem } from "@/eventSystem";
 
@@ -22,7 +20,7 @@ interface ActorLoadData {
         health: number,
         maxHealth: number
     }
-    ai: "player" | "random",
+    ai: "player" | "random" | "hostilePlayer",
     appearance: {
         looksLike: string
         spritesheet: {
@@ -37,6 +35,20 @@ const RAT_SPAWN: ActorLoadData = {
     name: "Rat",
     position: { x: 0, y: 0 },
     ai: "random",
+    appearance: {
+        looksLike: "rat",
+        spritesheet: {
+            resource: "assets/images/dungeon_sewers_002.png",
+            size: [16, 16]
+        },
+        dimension: [0, 1]
+    }
+}
+
+const HOSTILE_RAT: ActorLoadData = {
+    name: "Rat",
+    position: { x: 0, y: 0 },
+    ai: "hostilePlayer",
     appearance: {
         looksLike: "rat",
         spritesheet: {
@@ -87,15 +99,24 @@ export class Actor extends Entity {
 
     public moveTo(direction: Vector2D) {
         const entityPos = this.getComponent<Position>(Position)
+        const oldPosition = new Vector2D(entityPos.position.x, entityPos.position.y)
         const newPosition = new Vector2D(entityPos.position.x + direction.x, entityPos.position.y + direction.y)
 
         entityPos.position = newPosition
-        EventSystem.emit('entity:moved', { entity: this, from: entityPos, to: newPosition })
+        EventSystem.emit('entity:moved', { entity: this, from: oldPosition, to: newPosition })
         this.setPosition(newPosition.x, newPosition.y)
     }
 
     static spawnRat(position: Vector2D) {
         const rat = buildActor(RAT_SPAWN, position)
+        rat.addComponent(new Fighter(10))
+        rat.addComponent(new Active())
+        return rat
+    }
+
+    static spawnHostileRat(position: Vector2D) {
+        const rat = buildActor(HOSTILE_RAT, position)
+        
         rat.addComponent(new Fighter(10))
         rat.addComponent(new Active())
         return rat

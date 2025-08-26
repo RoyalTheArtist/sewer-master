@@ -1,4 +1,3 @@
-import { EventSystem } from "@/eventSystem"
 import { Entity } from "@engine/ecs"
 
 import { ImpossibleException, Vector2D } from "@engine/utils"
@@ -74,10 +73,7 @@ export class MeleeAction extends ActionWithDirection {
 
 export class BumpAction extends ActionWithDirection {
     canPerform(actor: Actor): {} {
-        const map = actor.parent
-        if (!map) return false
-        const destination = new Vector2D(actor.position.x + this.dest.x, actor.position.y + this.dest.y)
-        return map.isWalkable(destination) && map.isInBounds(destination) && !map.entityBlocks(destination)
+        return true
     }
     perform(entity: Actor) {
         if (!entity.parent) return new NoAction()

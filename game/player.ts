@@ -24,6 +24,10 @@ export class Player {
         Player._nextTurn = action
     }
 
+    static setPlayer(actor: Actor) {
+        Player._player = actor
+    }
+
     static spawnPlayerAt(position: Vector2D) {
         if (Player._player) {
             return Player._player

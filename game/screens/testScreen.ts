@@ -23,8 +23,7 @@ const populateTestMap = (map: GameMap) => {
 
     const rat = Actor.spawnRat(new Vector2D(7, 7))
     rat.parent = map
-
-    const rat2 = Actor.spawnRat(new Vector2D(2, 2))
+    const rat2 = Actor.spawnHostileRat(new Vector2D(2, 2))
     rat2.parent = map
 
     const healingScroll = Item.makeScroll(new Vector2D(2, 5))

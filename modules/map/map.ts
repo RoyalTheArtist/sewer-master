@@ -1,8 +1,8 @@
 import type { Entity } from '@engine/ecs/entity'
 import { Position } from '../components'
 import type { Vector2D } from '@engine/utils'
-import { Tile, TileMap, TileSprite, type TilesetData } from '@modules/rewrites/tiles/tile'
-import { BlocksMovement } from '@/lib/components'
+import { Tile, TileMap, TileSprite, type TilesetData } from '@modules/tiles/tile'
+import { Pathfinding } from '@/ai/pathfinding'
 
 interface BaseMap {
   name: string,

@@ -2,7 +2,7 @@
 import { Entity } from "@engine/ecs"
 import { IRenderable, Surface } from "@engine/render/surface"
 import { Vector2D } from "@engine/utils"
-import { TileSprite } from "@modules/rewrites/tiles/tile"
+import { TileSprite } from "@modules/tiles/tile"
 import { SpriteSheet } from "@engine/render/graphics/spritesheet"
 import { ActorAppearance } from "@modules/actors/components/appearance"
 import { Position } from "@modules/components"
@@ -44,7 +44,7 @@ export class MapEntityViewer implements IRenderable {
 
     public handleMovedEntity = (args: any) => {
         const { entity, to, from } = args
-        console.info('entity moved', { entity, to, from })
+        //console.info('entity moved', { entity, to, from })
 
         const graphic = this._graphics.get(entity)
         if (!graphic) return
