@@ -8,7 +8,7 @@ import { MoveSpriteAnimation } from "@modules/animations";
 import { ActorAppearance } from "./components/appearance";
 import { Inventory } from "./components/inventory";
 import { AnimationManager } from "@engine/render/graphics/animations";
-import { Active, AI, selectAI } from "../../game/ai";
+import { Active, AI, selectAI } from "../../game/ai/ai";
 import { Fighter } from "../combat/fighter";
 import { EventSystem } from "@/eventSystem";
 

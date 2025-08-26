@@ -5,7 +5,7 @@ import { Position } from "@modules/components"
 import { ActorAppearance } from "@modules/actors/components/appearance"
 import { Fighter } from "@modules/combat/fighter"
 import { BlocksMovement } from "@/lib/components"
-import { Active, AI } from "./ai"
+import { Active, AI } from "./ai/ai"
 
 export class Player {
     private static _nextTurn: Action | null = null

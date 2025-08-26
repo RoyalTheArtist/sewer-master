@@ -1,5 +1,5 @@
 import { Entity, System } from '@engine/ecs'
-import { AI } from '../ai'
+import { AI } from '../ai/ai'
 import { ActionQueue, NoAction } from '../actions'
 import { Actor } from '../../modules/actors/actors'
 
