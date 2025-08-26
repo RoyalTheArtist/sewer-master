@@ -11,6 +11,12 @@ const RENDER_CONFIG = {
     }
 } as const
 
+const GRID_INFO = {
+  width: 50,
+  height: 30,
+  cellSize: 12
+}
+
 function drawGrid(grid: Grid, ctx: CanvasRenderingContext2D, cellSize: number) {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.width);
@@ -33,7 +39,7 @@ function drawGrid(grid: Grid, ctx: CanvasRenderingContext2D, cellSize: number) {
   }
 }
 
-function drawColoredSquare(grid: Grid, ctx: CanvasRenderingContext2D, cellSize: number, coordinates: [number, number][], color: "red" | "blue" | "orange" | "white") {
+function drawColoredSquare(ctx: CanvasRenderingContext2D, cellSize: number, coordinates: [number, number][], color: "red" | "blue" | "orange" | "white") {
   ctx.fillStyle = color;
 
   for (const [x, y] of coordinates) {
@@ -58,21 +64,21 @@ function main() {
     const surface = new Surface(canvas, 800, 600);
     surface.initialize();
     const ctx = surface.context;
-    const grid = new Grid(30, 30);
+    const grid = new Grid(GRID_INFO.width, GRID_INFO.height);
     const pathfinding = new Pathfinding(grid);
     
     grid.getCell(3, 5).setWalkable(false)
 
-    createRoomWalls(grid, 0, 0, 30, 30)
+    createRoomWalls(grid, 0, 0, grid.getWidth(), grid.getHeight())
 
-    drawGrid(grid, ctx, 20);
+    drawGrid(grid, ctx, GRID_INFO.cellSize);
 
     const blockedCells = grid.getBlockedCells();
     
     for (let cell of blockedCells) {
         const [x, y] = cell.coordinates;
         
-        drawColoredSquare(grid, ctx, 20, [[x, y]], "orange");
+        drawColoredSquare(ctx, GRID_INFO.cellSize, [[x, y]], "orange");
     }
 
     const path = pathfinding.findPath(grid.getCell(2, 4), grid.getCell(6, 6));
@@ -81,7 +87,7 @@ function main() {
     for (let cell of path) {
         const [x, y] = cell.coordinates;
         
-        drawColoredSquare(grid, ctx, 20, [[x, y]], "blue");
+        drawColoredSquare(ctx, GRID_INFO.cellSize, [[x, y]], "blue");
     }
 }
 
