@@ -15,6 +15,7 @@
 
 
 :root {
+    --color-orange-burnt: #a7671f;
     --color-orange: #ff8906;
     --color-dark-blue: #0f0e17;
     --color-pearl: #fffffe;
@@ -22,6 +23,8 @@
     --color-black: black;
     --color-salmon: #f25f4c;
     --color-pink: #e53170;
+    --color-green-forest: #6a994e;
+    --color-green-forest-dark: #4b6f44;
 
     --size-xs: 0.25rem;
     --size-sm: 0.5rem;
@@ -39,19 +42,44 @@ body {
     --font-family: 'Pixel Elegance', 'Basik8','Pixelify Sans', sans-serif;
     --color-primary: var(--color-dark-blue);
     --color-accent: var(--color-orange);
+
+    --button-color: var(--color-orange);
+    --button-hover-color: var(--color-orange-burnt);
+    --button-focus-color: var(--color-green-forest-dark);
 }
 
+.toolbar {
+    display: flex;
+    gap: 0;
+}
 
 button, .theme-btn {
     border: 2px solid var(--color-primary);
+    cursor: pointer;
     color: var(--color-pearl);
     padding: var(--size-xs) var(--size-sm);
     background: var(--color-accent);
     text-transform: uppercase;
 
+    &.icon {
+        padding: 4px;
+        line-height: .6;
+        border: none;
+        align-content: center;
+        color: var(--color-black);
+    }
+
     &.filled {
-        background-color: var(--color-primary);
+        background-color: var(--button-color, var(--color-orange));
         color: var(--color-pearl);
+    }
+
+    &:hover {
+       background-color: var(--button-hover-color, var(--color-orange-burnt));
+    }
+
+    &:active {
+        background-color: var(--button-focus-color, var(--color-green-forest-dark));
     }
 }
 

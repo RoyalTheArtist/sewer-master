@@ -46,5 +46,5 @@ const newMap = () => {
       <!-- <button type="button" @click="loadMapFS">Load Map</button> -->
       <file-input label="Load" @change="loadMap" accept=".json,text/json" ></file-input>
     </section>
-    <map-maker-page v-if="map" :map="map"></map-maker-page>
+    <map-maker-page v-if="map !== null" :map="map"></map-maker-page>
 </template>
