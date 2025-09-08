@@ -18,18 +18,7 @@ interface BaseMap {
   isPassable(position: Vector2D): boolean
 }
 
-export interface MapGenerationData {
-  meta: {
-    name: string,
-    size: [width: number, height: number],
-    spritesheet: string
-  },
-  terrain: {
-    tileset: TilesetData,
-    layout: number[]
-  },
-  entities: Array<Entity>
-}
+
 
 export interface MapLoadData {
   meta: {

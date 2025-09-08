@@ -3,8 +3,9 @@ import FileInput from '../../components/fileInput.vue'
 import MapMakerPage from './MapMakerPage.vue';
 import { ref } from 'vue';
 import { generateEmptyMap, generateMap } from '@modules/map/utils';
-import type { GameMap, MapGenerationData } from '@modules/map/map';
+import type { GameMap } from '@modules/map/map';
 import { handleLoad } from '@modules/utils/files';
+import type { MapGenerationData } from '@modules/map/types';
 
 const map = ref<GameMap | null>(null)
 
@@ -18,6 +19,7 @@ const loadMap = async (event: Event) => {
 
 const newMap = () => {
   const mapTest = generateEmptyMap(25, 25)
+  localStorage.setItem('map', JSON.stringify(mapTest))
   map.value = mapTest
 }
 

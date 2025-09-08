@@ -13,7 +13,7 @@ export default defineConfig({
   root: './',
   publicDir: './resources',
   plugins: [vue(), vueJsx()],
-  server: { open: true, host: true, port: 3000 },
+  server: { open: true, host: true },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, "./game"),

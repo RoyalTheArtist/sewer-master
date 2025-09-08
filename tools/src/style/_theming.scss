@@ -1,0 +1,94 @@
+.ryl-theming {
+    padding: var(--theme-body-padding);
+    background-color: var(--theme-body-background);
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            display: inline-block;
+        }
+    }
+
+    .surface {
+        background-color: var(--theme-surface-color);
+    }
+}
+
+.theme-bone-torch {
+    --color-dark-slate: #306082;
+    --color-light-beige: #e7e2da;
+    --color-orange-burnt: #a7671f;
+    --color-orange: #ff8906;
+    --color-pearl: #fffffe;
+    --color-grey: #a7a9be;
+    --color-dark-blue: #0f0e17;
+
+    --theme-body-padding: 2px;
+    --theme-body-background: var(--color-dark-slate);
+
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+
+    main {
+        flex-grow: 2;
+    }
+
+    .surface-dark-slate {
+        --theme-surface-color: var(--color-dark-slate);
+    }
+
+    .surface-burnt-orange {
+        --theme-surface-color: var(--color-orange-burnt);
+        color: var(--color-grey);
+    }
+
+    .surface-black {
+        --theme-surface-color: var(--color-dark-blue);
+        color: var(--color-pearl);
+    }
+
+    .surface-beige {
+        --theme-surface-color: var(--color-light-beige);
+    }
+
+    a {
+        color: inherit;
+    }
+
+    a:visited {
+        color: inherit;
+    }
+
+    header {
+        h1 {
+            font-size: 1.5em;
+            padding: 0 16px;
+            color: var(--color-pearl);
+        }
+
+        nav.toolbar {
+            display: flex;
+            gap: 8px;
+            padding: 2px 16px 2px 32px;
+
+            a {
+                display: block;
+                padding: 0 8px;
+            }
+
+            .highlight {
+                color: var(--color-pearl);
+                background-color: var(--color-orange);
+                transform:skewX(-15deg) scale(1.1);
+            }
+        }
+    }
+
+    footer {
+        height: 400px;
+    }
+}
