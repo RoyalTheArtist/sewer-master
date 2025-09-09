@@ -10,23 +10,19 @@ const props = defineProps<{ tileMap: TileMap }>()
 
 const previewImg = computed(() => props.tileMap.spritesheet.texture.image)
 
-const activeTile = ref<TileSprite | null>(null)
+const activeTile = ref<{ tile: TileSprite, img: HTMLImageElement | undefined } | null>(null)
 
 const activeTileImg = computed(() => {
-  if (!activeTile.value) return null
-
-  if (!activeTile.value.sprite) return null
-
-  return activeTile.value.sprite.img
+  return activeTile.value?.img
 })
-const handleTileSelected = (tile: TileSprite) => {
-  activeTile.value = tile
-  emit('tile:selected', tile)
+const handleTileSelected = (value: {tile:TileSprite, img: HTMLImageElement | undefined}) => {
+  activeTile.value = value
+  emit('tile:selected', value.tile)
 }
 </script>
 
 <template>
-  <main id="tileset" class="grid-tiles">
+  <section id="tileset" class="grid-tiles">
     <div class="tileset-details card" v-if="false">
       <header class="card-header">
         <h3>Details</h3>
@@ -43,30 +39,31 @@ const handleTileSelected = (tile: TileSprite) => {
         </label>
       </section>
     </div>
-    <div class="active-tile card max-width-225" v-if="activeTile">
+    <div class="active-tile card" v-if="activeTile">
       <header class="card-header">
         <h3>Active Tile</h3>
+      </header>
+      <section class="tile-preview">
         <div class="tile" style="background-color: white">
           <img v-if="activeTileImg" :src="activeTileImg.src" alt="preview">
         </div>
-      </header>
-      <section class="card-body" >
-        <h3>Properties</h3>
         <label for="name">Tile Name:
-          <input type="text" name="name" value="">
+          <input type="text" name="name" :value="activeTile.tile.name">
         </label>
-        <label for="passable" class="checkbox-label">
+      </section>
+      <section class="card-body space-between" >
+        <label for="passable" class="checkbox-label space-between">
           Passable
-          <input type="checkbox" name="passable" :checked="activeTile.passable">
+          <input type="checkbox" name="passable" :checked="activeTile.tile.passable">
         </label>
-        <label for="passable" class="checkbox-label">
+        <label for="passable" class="checkbox-label space-between">
           Transparent
-          <input type="checkbox" name="transparent" :checked="activeTile.transparent"></label>
+          <input type="checkbox" name="transparent" :checked="activeTile.tile.transparent"></label>
       </section>
     </div>
     <tile-bench class="card flex-grow-2"
       :tile-map="tileMap" id="tileset"
       @tile:selected="handleTileSelected"
       ></tile-bench>
-  </main>
+  </section>
 </template>

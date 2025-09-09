@@ -2,17 +2,37 @@
 
     display: flex;
     gap: 8px;
+    padding: 6px;
+
+    .active-tile {
+        max-width: 325px;
+
+        .tile-preview {
+            display: flex;
+            flex-direction: row;
+            gap: 4px;
+        }
+
+        .tile {
+            max-width: 76px;
+            max-height: 76px;
+            border: 0;
+        }
+    }
     
     .tile {
         width: 100%;
         aspect-ratio: 1;
-        border: 1px solid black;
+        border: 3px transparent solid;
         img {
             width: 100%;
             height: 100%;
             image-rendering: pixelated;
         }
-
+        
+        &.selected {
+            border-color: var(--color-accent);
+        }
     }
 
     .tile-info {

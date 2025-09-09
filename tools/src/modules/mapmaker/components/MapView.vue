@@ -30,5 +30,40 @@ watch(
 </script>
 
 <template>
-  <div id="map-view" class="bg-black grid-map" ref="map-view"></div>
+  <div id="map-view" class="bg-black grid-map" >
+    <section class="toolbar">
+      <button class="btn-icon" type="button">
+        <span class="material-symbols-outlined">
+          brush
+        </span>
+      </button>
+      <button class="btn-icon" type="button">
+        <span class="material-symbols-outlined">
+          format_color_fill
+        </span>
+      </button>
+      <button class="btn-icon" type="button">
+        <span class="material-symbols-outlined">
+          diagonal_line
+        </span>
+      </button>
+      <button class="btn-icon" type="button">
+        <span class="material-symbols-outlined">
+          rectangle
+        </span>
+      </button>
+    </section>
+    <section ref="map-view">
+    </section>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+.grid-map {
+  display: flex;
+}
+
+.toolbar {
+  flex-direction: column;
+}
+</style>

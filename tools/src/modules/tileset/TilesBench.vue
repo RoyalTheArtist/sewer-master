@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import type { TileMap, TileSprite } from '@modules/rewrites/tiles/tile';
-import { computed } from 'vue';
+import type { TileMap, TileSprite } from '@modules/tiles/tile';
+import { computed, ref, watch } from 'vue';
+
+
 
 const emit = defineEmits<{
-  (e: 'tile:selected', tile: TileSprite): void
+  (e: 'tile:selected', value: { tile: TileSprite, img: HTMLImageElement | undefined }): void
 }>()
 
 
@@ -21,6 +23,14 @@ const tilesForView = computed(() => {
   return tilesForView
 })
 
+const selectedTile = ref<TileSprite | null>(null)
+
+const selectTile = (tile: { tile: TileSprite, img: HTMLImageElement | undefined }) => {
+  selectedTile.value = tile.tile
+  emit('tile:selected', tile)
+}
+
+
 </script>
 
 <template>
@@ -31,7 +41,7 @@ const tilesForView = computed(() => {
       <button type="button" class="fill-tile">Fill</button>
     </div>
     <div class="tiles" v-if="tileMap">
-      <div class="tile" v-for="tile in tilesForView" :key="tile.toString()" @click="emit('tile:selected', tile.tile)" >
+      <div class="tile" :class="{ 'selected': selectedTile === tile.tile }" v-for="tile in tilesForView" :key="tile.toString()" @click="selectTile(tile)" >
           <img v-if="tile.img" :src="tile.img.src" alt="tile">
       </div>
     </div>

@@ -13,7 +13,7 @@ const sidebarOpen = ref(false)
 </script>
 
 <template>
-  <div class="view-sidebar">
+  <main class="view-sidebar">
     <section class="sidebar-left" :class="{ 'open': sidebarOpen }">
       <div class="content">
         <h3>Properties</h3>
@@ -39,13 +39,15 @@ const sidebarOpen = ref(false)
             </span>
           </button>
         </li>
+        <li>
+          <span class="material-symbols-outlined">
+          brush
+          </span>
+        </li>
       </ul>
     </section>
     <map-view class="view-main" :map="props.map" :activeTile="activeTile"></map-view>
-  </div>
-
-  <h3>Tile Set</h3>
-  <!-- <tile-set-loader @tileset:loaded="tileset = $event"></tile-set-loader> -->
+  </main>
   <tile-set-view v-if="props.map.tileMap" :tileMap="props.map.tileMap" @tile:selected="activeTile = $event"></tile-set-view>
 </template>
 

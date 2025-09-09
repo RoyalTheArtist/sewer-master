@@ -35,7 +35,7 @@
 }
 
 body {
-    background-color: var(--backgroundColor,rgb(230, 225, 217));
+    background-color: var(--backgroundColor,#e7e2da);
     font-family: var(--font-family, sans-serif);
 }
 
@@ -94,3 +94,8 @@ button, .theme-btn {
 //   margin-left: 5px;
 //   font-size: 1rem
 // }
+
+.space-between {
+    display: flex;
+    justify-content: space-between;
+}
