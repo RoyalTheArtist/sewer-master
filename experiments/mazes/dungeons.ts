@@ -8,8 +8,6 @@ import type { RoomsAndMazesOptions } from './gridGenerator';
 import { Toolbar } from "./utils";
 import { CanvasViewport } from "@engine/render/viewport";
 import { Sprite } from "@engine/render/graphics/sprite";
-import { Texture } from "@engine/render/graphics/texture";
-import { SpriteSheet } from "@engine/render/graphics/spritesheet";
 
 const PATH_PALETTE = [
     new Color(202, 160, 90),
@@ -24,10 +22,8 @@ const GENERATOR_OPTIONS: GeneratorOptions = Object.freeze({
     minRoomSize: 2,
     maxRoomSize: 5
 } as const)
+
 // DIRECTIONS: TOP, RIGHT, BOTTOM, LEFT
-
-
-
 const DIRECTIONS_CARDINAL = [[0, -1], [1, 0], [0, 1], [-1, 0]]
 
 function findConnectors(grid: Grid) {
@@ -132,7 +128,6 @@ class DungeonGenerator {
         this.pruneAll(this.pruneAmounts)
         this.identifyDeadEnds()
         this.draw()
-        
     }
 
     public step() {
@@ -249,90 +244,6 @@ class DungeonGenerator {
             this.connectors.splice(this.connectors.indexOf(connector), 1)
         }
     }
-
-    // public build(): TinyMap {
-    //     const blankTile = new TinyTile(0, 0, false, false)
-    //     const appearanceInfo = appearanceLibrary.get("blank") as { appearance: Appearance, graphicsData: AppearanceData }
-    //     const graphic = new ColorGraphics(0, 0, 16, 16, Color.fromString("black"))
-    //     blankTile.appearance = appearanceInfo?.appearance
-    //     blankTile.appearance.graphic = graphic
-    //     blankTile.appearance?.init()
-    //     const tinyMap = new TinyMap(this.dungeon.width, this.dungeon.height)
-    //     tinyMap.fill((x, y) => {
-    //         const copy = blankTile.copy(x, y)
-    //         copy.appearance!.graphic = graphic
-    //         copy.appearance?.init()
-    //         copy.appearance!.parent = copy
-    //         return copy
-    //     })
-
-    //     for (const cell of this.dungeon.grid.getAllCells()) {
-    //         if (!cell.isWalkable()) {
-    //             const tile = tinyMap.tiles.getCell(cell.getX(), cell.getY()) as TinyTile
-    //             tile.passable = false
-    //             tile.transparent = false
-    //             const appearanceData = appearanceLibrary.get("tree")!
-    //             tile.appearance = appearanceData.appearance.copy() 
-
-
-    //             if (tile.appearance) {
-    //                 tile.appearance.graphic = getAppearanceGraphic(appearanceData.graphicsData)
-    //                 tile.appearance.init()
-    //             }
-    //         } else {
-    //             // const tile = tinyMap.tiles.getCell(cell.getX(), cell.getY()) as TinyTile
-    //             // tile.passable = true
-    //             // tile.transparent = true
-    //             // const appearanceData = appearanceLibrary.get("grass")!
-    //             // tile.appearance = appearanceData.appearance.copy()
-    //             // if (tile.appearance) {
-    //             //     tile.appearance.graphic = getAppearanceGraphic(appearanceData.graphicsData)
-    //             //     tile.appearance.init()
-    //             // }
-    //         }
-    //     }
-
-    //     for (const cell of this.dungeon.maze.getCells()) {
-    //          const tile = tinyMap.tiles.getCell(cell.getX(), cell.getY()) as TinyTile
-    //         tile.passable = true
-    //         tile.transparent = true
-    //         const appearanceData = appearanceLibrary.get("dirt")!
-    //         tile.appearance = appearanceData.appearance.copy()
-    //         if (tile.appearance) {
-    //             tile.appearance.graphic = getAppearanceGraphic(appearanceData.graphicsData)
-    //             tile.appearance.init()
-    //         }   
-    //     }
-
-    //     for (const room of this.dungeon.rooms) {
-    //         for (let i = room.x; i < room.x + room.width; i++) {
-    //             for (let j = room.y; j < room.y + room.height; j++) {
-    //                 const tile = tinyMap.tiles.getCell(i, j) as TinyTile
-    //                 tile.passable = true
-    //                 tile.transparent = true
-    //                 const appearanceData = appearanceLibrary.get("grass")!
-    //                 tile.appearance = appearanceData.appearance.copy()
-    //                 if (tile.appearance) {
-    //                     tile.appearance.graphic = getAppearanceGraphic(appearanceData.graphicsData)
-    //                     tile.appearance.init()
-    //                 }
-    //             }
-    //         }
-
-    //         room.exits.forEach(exit => {
-    //             const tile = tinyMap.tiles.getCell(exit.getX(), exit.getY()) as TinyTile
-    //             tile.passable = true
-    //             tile.transparent = true
-    //             const appearanceData = appearanceLibrary.get("dirt")!
-    //             tile.appearance = appearanceData.appearance.copy()
-    //             if (tile.appearance) {
-    //                 tile.appearance.graphic = getAppearanceGraphic(appearanceData.graphicsData)
-    //                 tile.appearance.init()
-    //             }
-    //         })
-    //     }
-    //     return tinyMap.init()
-    // }
 }
 
 
@@ -482,7 +393,7 @@ class ForestMapModule {
              const tile = tinyMap.tiles.getCell(cell.getX(), cell.getY()) as TinyTile
             tile.passable = true
             tile.transparent = true
-            const appearanceData = appearanceLibrary.get("dirt")!
+            const appearanceData = appearanceLibrary.get("path")!
             tile.appearance = appearanceData.appearance.copy()
             if (tile.appearance) {
                 tile.appearance.graphic = getAppearanceGraphic(appearanceData.graphicsData)
@@ -519,6 +430,10 @@ class ForestMapModule {
         }
         this.setMap(tinyMap.init())
         return this
+    }
+
+    generateEncounters() {
+        
     }
 
     draw() {

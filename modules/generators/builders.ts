@@ -1,7 +1,9 @@
-import { Color } from "@engine/utils"
-import { Cell, Grid, Region } from "../grid/grid"
-
-const DIRECTIONS_CARDINAL = [[0, -1], [1, 0], [0, 1], [-1, 0]]
+import { Vector2D } from '@engine/utils';
+import { Surface } from '@engine/render/surface';
+import { Color } from '@engine/utils';
+import { Region } from "./region"
+import { Cell } from './cell';
+import { Grid } from './grid';
 
 const ROOM_PALETTE = [
     new Color(201, 204, 161, 1),
@@ -17,7 +19,7 @@ const PATH_PALETTE = [
     new Color(142, 160, 145)
 ]
 
-function generateRandomRoom(min: number, max: number, gridWidth: number, gridHeight: number) {
+export function generateRandomRoom(min: number, max: number, gridWidth: number, gridHeight: number) {
     const width = Math.floor(Math.random() * (max - min) + min) + 1;
     const height = Math.floor(Math.random() * (max - min) + min) + 1;
 
@@ -26,28 +28,95 @@ function generateRandomRoom(min: number, max: number, gridWidth: number, gridHei
     return new Room(x, y, width, height);
 }
 
-export class Path extends Region {
+export class Path extends Region<WalledCell> {
     color: Color
     constructor(color: Color = Color.fromString("white")) {
         super()
         this.color = color
     }
 
-    addCell(cell: Cell): void {
+    addCell(cell: Cell<WalledCell>): void {
         super.addCell(cell)
-        cell.color = this.color
+        if (cell.data) cell.data.color = this.color
     }
 }
 
+export class WalledCell {
+  private walkable: boolean;
+  private _color: Color
+  public walls: [boolean, boolean, boolean, boolean] = [false, false, false, false];
 
+  public get color(): Color { return this._color }
+  public set color(color: Color) {
+    this._color = color
+  }
 
-export class Room extends Region {
+  constructor(walkable: boolean = false, cost: number = 1, lookslike?: string) {
+
+    this.walkable = walkable;
+
+    this._color = Color.fromString("black")
+    }
+    
+
+  public isWalkable(): boolean {
+    return this.walkable;
+  }
+
+  public setWalkable(walkable: boolean): void {
+    this.walkable = walkable;
+  }
+
+  public draw(surface: Surface, position: Vector2D) {
+    surface.drawRect(position, new Vector2D(10, 10), this.color)
+    return this
+  }
+
+  public drawWalls(surface: Surface, position: Vector2D) {
+    if (this.walls[0]) {
+      surface.drawRect(new Vector2D(position.x, position.y), new Vector2D(10, 1), Color.fromString("black"))
+    }
+
+    if (this.walls[1]) {
+      surface.drawRect(new Vector2D(position.x + 9, position.y), new Vector2D(1, 10), Color.fromString("black"))
+    }
+
+    if (this.walls[2]) {
+      surface.drawRect(new Vector2D(position.x, position.y + 9), new Vector2D(10, 1), Color.fromString("black"))
+    }
+
+    if (this.walls[3]) {
+      surface.drawRect(new Vector2D(position.x, position.y), new Vector2D(1, 10), Color.fromString("black"))
+    }
+    return this
+  }
+
+  public breakWall(direction: number[]) {
+    const [x, y] = direction
+
+    if (x === 0) {
+      if (y === 1) {
+        this.walls[2] = false
+      } else if (y === -1) {
+        this.walls[0] = false
+      }
+    } else if (y === 0) {
+      if (x === 1) {
+        this.walls[1] = false
+      } else if (x === -1) {
+        this.walls[3] = false
+    }
+    }
+  }
+}
+
+export class Room extends Region<WalledCell> {
     width: number
     height: number
     x: number
     y: number
     color: Color
-    exits: Set<Cell> = new Set()
+    exits: Set<Cell<WalledCell>> = new Set()
  
     constructor(x: number, y: number, width: number, height: number, palette: Color[] | Color = ROOM_PALETTE) {
         super()
@@ -63,13 +132,16 @@ export class Room extends Region {
         }
     }
 
-    addCell(cell: Cell): void {
-        cell.color = this.color
-        cell.setWalkable(true)
+    addCell(cell: Cell<WalledCell>): void {
+        if (cell.data) {
+            cell.data.color = this.color
+            cell.data.setWalkable(true)
+        }
+
         super.addCell(cell)
     }
 
-    addExit(cell: Cell) {
+    addExit(cell: Cell<WalledCell>) {
         this.exits.add(cell)
         this.addCell(cell)
     }
@@ -83,7 +155,8 @@ export class Room extends Region {
         return true
     }
 }
-class RoomBuilder {
+
+export class RoomBuilder {
     rooms: Room[] = []
     constructor(public grid: Grid, public maxAttempts: number = 50, public minRoomSize: number = 2, public maxRoomSize: number = 6) {
 
@@ -127,20 +200,20 @@ class RoomBuilder {
 }
 
 class MazeBuilder {
-    grid: Grid
+    grid: Grid<WalledCell>
     maze: Path
 
-    currentCell: Cell | null = null
-    unvisitedCells: Set<Cell>
-    cellStack: Cell[] = []
-    constructor(grid: Grid) {
+    currentCell: Cell<WalledCell> | null = null
+    unvisitedCells: Set<Cell<WalledCell>>
+    cellStack: Cell<WalledCell>[] = []
+    constructor(grid: Grid<WalledCell) {
         this.grid = grid
         this.maze = new Path(PATH_PALETTE[Math.floor(Math.random() * PATH_PALETTE.length)])
         this.unvisitedCells = new Set(this.grid.getAllCells())
     }
 
     static new(width: number, height: number) {
-        const grid = new Grid(width, height)
+        const grid = new Grid<WalledCell>(width, height)
         return new MazeBuilder(grid)
     }
 
@@ -267,46 +340,5 @@ class GridBuilder {
             }
 
         }
-    }
-}
-
-export type RoomsAndMazesOptions = {
-    maxRoomAttempts?: number
-    minRoomSize?: number
-    maxRoomSize?: number
-}
-
-export class RoomsAndMazes extends GridBuilder {
-    roomBuilder: RoomBuilder
-    mazeBuilder: MazeBuilder
-    constructor(width: number, height: number, options?: RoomsAndMazesOptions) {
-        super(width, height)
-        this.roomBuilder = new RoomBuilder(this.grid, options?.maxRoomAttempts, options?.minRoomSize, options?.maxRoomSize)
-        this.mazeBuilder = new MazeBuilder(this.grid)
-    }
-
-    public start() {
-        this.grid.resetGrid()
-        this.roomBuilder.start()
-        this.roomBuilder.addRooms()
-        this.mazeBuilder.start()
-    }
-
-    public step() {
-        this.mazeBuilder.carve()
-
-        return this.mazeBuilder.currentCell !== null
-    }
-
-    public bake(factor: number = 2) {
-        const { grid, maze } = this.mazeBuilder.scaleMaze()
-
-        const rooms = []
-        for (const room of this.roomBuilder.rooms) {
-            const newRoom = new Room(room.x * factor, room.y * factor, room.width * factor - 1, room.height * factor - 1, room.color)
-            rooms.push(newRoom)
-        }
-
-        return { grid, maze, rooms }
     }
 }

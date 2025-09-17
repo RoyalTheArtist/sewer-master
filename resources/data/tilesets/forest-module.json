@@ -4,32 +4,76 @@
         "size": [16, 16]
     },
     "appearances": {
-        "dirt": {
+        "adventurer": {
             "graphics": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [0, 0]
             }
         },
-        "tree": {
+        "dirt": {
             "graphics": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
-                "location": [16, 0]
+                "location": [0, 16],
+                "variants": [
+                    [16, 16],
+                    [32, 16],
+                    [48, 16]
+                ]
+            }
+        },
+        "path": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [64, 16],
+                "variants": [
+                    [80, 16]
+
+                ]
             }
         },
         "grass": {
             "graphics": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
-                "location": [32, 16]
+                "location": [32, 32],
+                "variants": [
+                    [16, 32],
+                    [0, 32],
+                    [48, 32]
+                ]
             }
         },
-        "warrior": {
+        "tree": {
             "graphics": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
-                "location": [32, 0]
+                "location": [32, 48],
+                "variants": [
+                    [64, 32],
+                    [80, 32],
+                    [0, 48],
+                    [16, 48],
+                    [48, 48],
+                    [64, 48]
+                ]
+            }
+        },
+        "water": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [64, 48],
+                "variants": [[0, 64]]
+            }
+        },
+        "deepwater": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [16, 64]
             }
         }
     },
