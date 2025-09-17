@@ -1,0 +1,56 @@
+{
+    "meta": {
+        "name": "Forest Module",
+        "size": [16, 16]
+    },
+    "appearances": {
+        "dirt": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [0, 0]
+            }
+        },
+        "tree": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [16, 0]
+            }
+        },
+        "grass": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [32, 16]
+            }
+        },
+        "warrior": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [32, 0]
+            }
+        }
+    },
+    "tiles": [
+                {
+                    "name": "dirt",
+                    "passable": true,
+                    "transparent": true,
+                    "appearance": "dirt"
+                },
+                {
+                    "name": "tree",
+                    "passable": false,
+                    "transparent": false,
+                    "appearance": "tree"
+                },
+                {
+                    "name": "grass",
+                    "passable": true,
+                    "transparent": true,
+                    "appearance": "grass"
+                }
+            ]
+}
