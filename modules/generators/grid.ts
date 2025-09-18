@@ -1,31 +1,73 @@
-import { Cell } from './cell';
+import { Vector2D } from '@engine/utils';
 
-export class Grid<T extends any> {
-  private width: number;
-  private height: number;
-  private cells: Cell<T>[][];
+
+export interface ICell {
+  x: number
+  y: number
+  position: Vector2D
+}
+
+
+
+export class Cell implements ICell {
+  private _pos: Vector2D
+
+  public get position(): Vector2D { return this._pos }
+  public get x(): number { return this._pos.x }
+  public get y(): number { return this._pos.y }
+
+  constructor(x: number, y: number) {
+    this._pos = new Vector2D(x, y)
+  }
+}
+
+
+export interface IGrid {
+  readonly width: number;
+  readonly height: number;
+  readonly cells: Cell[][];
+  readonly cellsFlat: Cell[]
+
+  getCell(x: number, y: number): Cell | undefined
+  setCell(x: number, y: number, cell: Cell): void
+  isWithinBounds(x: number, y: number): boolean
+  fill(fillFn: (x: number, y: number) => Cell): IGrid
+  getNeighborCells(x: number, y: number): Cell[]
+}
+
+export abstract class Grid<T extends Cell> implements IGrid {
+  private _width: number;
+  private _height: number;
+  private _cells:  T[][] = [];
+
+  public get width(): number {
+    return this._width;
+  }
+
+  public get height(): number {
+    return this._height;
+  }
+
+  public get cells(): T[][] {
+    return this._cells;
+  }
+
+  public get cellsFlat(): T[] {
+    return this._cells.flat();
+  }
 
   constructor(width: number, height: number) {
-    this.width = width;
-    this.height = height;
-      
-    this.cells = new Array(height).fill(0).map((_, y) => new Array(width).fill(0)); 
+    this._width = width;
+    this._height = height;
+    
   }
 
-  public getWidth(): number {
-    return this.width;
-  }
-
-  public getHeight(): number {
-    return this.height;
-  }
-
-  public getCell(x: number, y: number): Cell<T> | undefined {
+  public getCell(x: number, y: number): T | undefined{
     if (!this.isWithinBounds(x, y)) return undefined;
-    return this.cells[y][x];
+    return this.cells[y][x] as T;
   }
 
-  public setCell(x: number, y: number, cell: Cell<T>): void {
+  public setCell(x: number, y: number, cell: T): void {
     this.cells[y][x] = cell;
   }
 
@@ -33,34 +75,26 @@ export class Grid<T extends any> {
     return x >= 0 && x < this.width && y >= 0 && y < this.height;
   }
 
-    public fill(fill: (x: number, y: number) => T) {
-        for (let y = 0; y < this.height; y++) {
-            for (let x = 0; x < this.width; x++) {
-                this.cells[y][x].data = fill(x, y)
-            }
-        }
-        return this
-    }
+  public fill(fillFn: (x: number, y: number) => T) {
+    this._cells = new Array(this.height).fill(0).map((_, y) => new Array(this.width).fill(0).map((_, x) => fillFn(x, y)));
 
-  public getAllCells(): Cell<T>[] {
-    const allCells: Cell<T>[] = [];
     for (let y = 0; y < this.height; y++) {
-      for (let x = 0; x < this.width; x++) {
-        allCells.push(this.getCell(x, y) as Cell<T>);
-      }
+        for (let x = 0; x < this.width; x++) {
+            this.cells[y][x] = fillFn(x, y)
+        }
     }
-    return allCells;
+    return this
   }
 
-  public getNeighbors(x: number, y: number): Cell<T>[] {
-    const neighbors: Cell<T>[] = [];
+  public getNeighborCells(x: number, y: number): T[] {
+    const neighbors: T[] = [];
     for (const dx of [-1, 0, 1]) {
       for (const dy of [-1, 0, 1]) {
         if (dx === 0 && dy === 0) continue;
         const nx = x + dx;
         const ny = y + dy;
         if (this.isWithinBounds(nx, ny)) {
-          neighbors.push(this.getCell(nx, ny) as Cell<T>);
+          neighbors.push(this.getCell(nx, ny) as T);
         }
       }
     }

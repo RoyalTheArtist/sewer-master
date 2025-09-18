@@ -1,11 +1,14 @@
-import { Cell } from "./cell"
-import { Grid } from "./grid"
+import { Grid, Cell } from "./grid"
 
-export class Region<T> {
+export class RegionCell extends Cell {
+  region: Region<RegionCell> | null = null
+}
+
+export class Region<T extends RegionCell> {
   public grid: Grid<T> | null = null
-  private cells: Set<Cell<T>> = new Set()
+  private cells: Set<T> = new Set()
   constructor(grid?: Grid<T> | null) { this.grid = grid || null}
-  addCell(cell: Cell<T>) {
+  addCell(cell: T) {
     if (cell.region) {
       cell.region.removeCell(cell)
     }
@@ -13,13 +16,9 @@ export class Region<T> {
     this.cells.add(cell)
   }
   getCells() { return this.cells }
-  hasCell(cell: Cell<T>) { return this.cells.has(cell) }
-  removeCell(cell: Cell<T>) { this.cells.delete(cell) }  
+  hasCell(cell: T) { return this.cells.has(cell) }
+  removeCell(cell: T) { this.cells.delete(cell) }  
   clear() { this.cells.clear() }
     clone() { return new Region(this.grid) }
-
-}
-
-class Room<T> extends Region<T> {
 
 }

@@ -1,9 +1,9 @@
+import { DIRECTIONS_CARDINAL } from './utils';
 import { Vector2D } from '@engine/utils';
 import { Surface } from '@engine/render/surface';
 import { Color } from '@engine/utils';
 import { Region } from "./region"
-import { Cell } from './cell';
-import { Grid } from './grid';
+import { Grid, Cell } from './grid';
 
 const ROOM_PALETTE = [
     new Color(201, 204, 161, 1),
@@ -35,27 +35,39 @@ export class Path extends Region<WalledCell> {
         this.color = color
     }
 
-    addCell(cell: Cell<WalledCell>): void {
+    addCell(cell: WalledCell): void {
         super.addCell(cell)
-        if (cell.data) cell.data.color = this.color
+        if (cell.color) cell.color = this.color
     }
 }
 
-export class WalledCell {
+export class WalledGrid extends Grid<WalledCell> {
+    public draw(surface: Surface, cellSize: number, drawWalls: boolean = true) {
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        this.getCell(x, y)?.draw(surface, new Vector2D(x * cellSize, y * cellSize));
+        if (drawWalls) this.getCell(x, y)?.drawWalls(surface, new Vector2D(x * cellSize, y * cellSize));
+      }
+    }
+  }
+}
+
+export class WalledCell extends Cell {
   private walkable: boolean;
   private _color: Color
-  public walls: [boolean, boolean, boolean, boolean] = [false, false, false, false];
+    public walls: [boolean, boolean, boolean, boolean] = [false, false, false, false];
+    public region: Region<WalledCell> | null = null
 
   public get color(): Color { return this._color }
   public set color(color: Color) {
     this._color = color
   }
 
-  constructor(walkable: boolean = false, cost: number = 1, lookslike?: string) {
-
+    constructor(x: number, y: number, walkable: boolean = false, walls?: [boolean, boolean, boolean, boolean], color: Color = Color.fromString("black")) {
+    super(x, y);
     this.walkable = walkable;
-
-    this._color = Color.fromString("black")
+    this.walls = walls || [false, false, false, false];
+    this._color = color
     }
     
 
@@ -116,7 +128,7 @@ export class Room extends Region<WalledCell> {
     x: number
     y: number
     color: Color
-    exits: Set<Cell<WalledCell>> = new Set()
+    exits: Set<WalledCell> = new Set()
  
     constructor(x: number, y: number, width: number, height: number, palette: Color[] | Color = ROOM_PALETTE) {
         super()
@@ -132,16 +144,13 @@ export class Room extends Region<WalledCell> {
         }
     }
 
-    addCell(cell: Cell<WalledCell>): void {
-        if (cell.data) {
-            cell.data.color = this.color
-            cell.data.setWalkable(true)
-        }
-
+    addCell(cell: WalledCell): void {
+        cell.color = this.color
+        cell.setWalkable(true)
         super.addCell(cell)
     }
 
-    addExit(cell: Cell<WalledCell>) {
+    addExit(cell: WalledCell) {
         this.exits.add(cell)
         this.addCell(cell)
     }
@@ -158,7 +167,7 @@ export class Room extends Region<WalledCell> {
 
 export class RoomBuilder {
     rooms: Room[] = []
-    constructor(public grid: Grid, public maxAttempts: number = 50, public minRoomSize: number = 2, public maxRoomSize: number = 6) {
+    constructor(public grid: WalledGrid, public maxAttempts: number = 50, public minRoomSize: number = 2, public maxRoomSize: number = 6) {
 
     }
 
@@ -169,7 +178,7 @@ export class RoomBuilder {
     public addRooms() {
         let attempts = 0
         while (attempts++ < this.maxAttempts) {
-            const room = generateRandomRoom(this.minRoomSize, this.maxRoomSize, this.grid.getWidth(), this.grid.getHeight())
+            const room = generateRandomRoom(this.minRoomSize, this.maxRoomSize, this.grid.width, this.grid.height)
             this.addRoom(room)
         }
     }
@@ -185,8 +194,9 @@ export class RoomBuilder {
     public placeRoom(room: Room) {
         for (let i = room.x; i < room.x + room.width; i++) {
             for (let j = room.y; j < room.y + room.height; j++) {
-                const cell = this.grid.getCell(i, j) as Cell;
-                cell?.setWalkable(true);
+                const cell = this.grid.getCell(i, j);
+                if (!cell) continue
+                cell.setWalkable(true);
 
                 if (i === room.x) cell.walls[3] = true;
                 if (j === room.y) cell.walls[0] = true;
@@ -199,33 +209,32 @@ export class RoomBuilder {
     }
 }
 
-class MazeBuilder {
-    grid: Grid<WalledCell>
+export class MazeBuilder {
+    grid: WalledGrid
     maze: Path
 
-    currentCell: Cell<WalledCell> | null = null
-    unvisitedCells: Set<Cell<WalledCell>>
-    cellStack: Cell<WalledCell>[] = []
-    constructor(grid: Grid<WalledCell) {
+    currentCell: WalledCell | null = null
+    unvisitedCells: Set<WalledCell>
+    cellStack: WalledCell[] = []
+    constructor(grid: WalledGrid) {
         this.grid = grid
         this.maze = new Path(PATH_PALETTE[Math.floor(Math.random() * PATH_PALETTE.length)])
-        this.unvisitedCells = new Set(this.grid.getAllCells())
+        this.unvisitedCells = new Set(this.grid.cellsFlat.filter(cell => !cell.isWalkable()))
     }
 
     static new(width: number, height: number) {
-        const grid = new Grid<WalledCell>(width, height)
+        const grid = new WalledGrid(width, height)
         return new MazeBuilder(grid)
     }
 
     public start() {
-        const emptyCells = this.grid.getAllCells().filter(cell => !cell.isWalkable())
-        this.unvisitedCells = new Set(emptyCells)
+        this.unvisitedCells = new Set(this.grid.cellsFlat.filter(cell => !cell.isWalkable()))
         
         this.maze.clear()
         this.maze.color = PATH_PALETTE[Math.floor(Math.random() * PATH_PALETTE.length)]
         while (this.currentCell === null) {
-            const startX = Math.floor(Math.random() * this.grid.getWidth())
-            const startY = Math.floor(Math.random() * this.grid.getHeight())
+            const startX = Math.floor(Math.random() * this.grid.width)
+            const startY = Math.floor(Math.random() * this.grid.height)
 
             const cell = this.grid.getCell(startX, startY)
             if (cell && this.unvisitedCells.has(cell)) {
@@ -239,8 +248,8 @@ class MazeBuilder {
     public carve() {
         if (!this.currentCell) return
 
-        const cx = this.currentCell.getX()
-        const cy = this.currentCell.getY()
+        const cx = this.currentCell.x
+        const cy = this.currentCell.y
 
         const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]]
         const neighborDirections = directions.reduce(
@@ -257,8 +266,8 @@ class MazeBuilder {
         const nextDirection = neighborDirections[Math.floor(Math.random() * neighborDirections.length)]
 
         if (nextDirection) {
-            const nextCell = this.grid.getCell(cx + nextDirection[0], cy + nextDirection[1]) as Cell
-           
+            const nextCell = this.grid.getCell(cx + nextDirection[0], cy + nextDirection[1])
+            if (!nextCell) return
             this.currentCell.breakWall(nextDirection)
 
             nextCell.walls = [true, true, true, true]
@@ -266,7 +275,7 @@ class MazeBuilder {
 
             this.addToMaze(nextCell)
         } else if (this.cellStack.length > 0) {
-            this.currentCell = this.cellStack.pop() as Cell
+            this.currentCell = this.cellStack.pop() || null
         }
 
         if (this.cellStack.length === 0) {
@@ -279,7 +288,7 @@ class MazeBuilder {
         this.addToMaze(cellsRemaining[Math.floor(Math.random() * cellsRemaining.length)])
     }
 
-    public addToMaze(cell: Cell) {
+    public addToMaze(cell: WalledCell) {
         this.currentCell = cell
         cell.setWalkable(true)
         this.unvisitedCells.delete(cell)
@@ -288,14 +297,15 @@ class MazeBuilder {
     }
 
     public scaleMaze() {
-        const grid = new Grid(this.grid.getWidth() * 2, this.grid.getHeight() * 2)
+        const grid = new WalledGrid(this.grid.width * 2, this.grid.height * 2).fill((x, y) => new WalledCell(x, y, false, [true, true, true, true]))
         const scaledMaze = new Path(this.maze.color)
-        const sortedCells = Array.from(this.maze.getCells()).sort((cellA, cellB) => cellA.getX() - cellB.getX() || cellA.getY() - cellB.getY())
+        const sortedCells = Array.from(this.maze.getCells()).sort((cellA, cellB) => cellA.x - cellB.x || cellA.y - cellB.y)
         for (const cell of sortedCells) {
-            const x = cell.getX() * 2
-            const y = cell.getY() * 2
+            const x = cell.x * 2
+            const y = cell.y * 2
 
-            const targetCell = grid.getCell(x, y) as Cell
+            const targetCell = grid.getCell(x, y)
+            if (!targetCell) continue
             targetCell.setWalkable(cell.isWalkable())
             scaledMaze.addCell(targetCell)
 
@@ -306,7 +316,7 @@ class MazeBuilder {
 
                 if (!direction) continue
 
-                const wallCell = grid.getCell(x  + direction[0], y + direction[1]) as Cell
+                const wallCell = grid.getCell(x  + direction[0], y + direction[1])
 
                 if (wallCell && !this.maze.hasCell(wallCell)) {
                     wallCell.setWalkable(cell.isWalkable())
@@ -319,21 +329,22 @@ class MazeBuilder {
     }
 }
 
-class GridBuilder {
-    grid: Grid
+export class GridBuilder {
+    grid: WalledGrid
     constructor(width: number, height: number) {
-        this.grid = new Grid(width, height)
+        this.grid = new WalledGrid(width, height)
+        this.grid.fill((x, y) => new WalledCell(x, y, false, [true, true, true, true]))
     }
 
     public closeWalls() {
-        for (const cell of this.grid.getAllCells()) {
+        for (const cell of this.grid.cellsFlat) {
             if (!cell.isWalkable()) continue
 
             for (const [index, hasWall] of cell.walls.entries()) {
                 if (hasWall) continue
                 const direction = DIRECTIONS_CARDINAL[index]
                 if (!direction) continue
-                const neighborCell = this.grid.getCell(cell.getX() + direction[0], cell.getY() + direction[1]) as Cell
+                const neighborCell = this.grid.getCell(cell.x + direction[0], cell.y + direction[1])
                 if (!neighborCell?.isWalkable()) {
                     cell.walls[index] = true
                 }
