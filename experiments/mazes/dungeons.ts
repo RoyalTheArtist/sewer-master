@@ -11,24 +11,6 @@ import { createAppearances, TilesetData } from '@modules/generators/temporary';
 import { ForestMapGenerator } from '@modules/generators/mapGenerator'
 
 
-function findConnectors(grid: WalledGrid) {
-    const cardinalDirections = [[0, 1], [1, 0]] as number[][];
-
-    const connectors = [] as WalledCell[]
-
-    for (const cell of grid.cellsFlat.filter(cell => !cell.isWalkable())) {
-        for (const direction of cardinalDirections) {
-            const neighborCell = grid.getCell(cell.x + direction[0], cell.y + direction[1]);
-            const secondNeighbor = grid.getCell(cell.x + direction[0] * -1, cell.y + direction[1] * -1);
-            
-            if (neighborCell?.isWalkable() && secondNeighbor?.isWalkable() && neighborCell?.color !== secondNeighbor?.color) {
-                connectors.push(cell);
-            }
-        }
-    }
-
-    return connectors
-}
 
 class DisplayGrid {
     section: HTMLElement

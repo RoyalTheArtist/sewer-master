@@ -38,7 +38,8 @@ export interface IGrid {
 export abstract class Grid<T extends Cell> implements IGrid {
   private _width: number;
   private _height: number;
-  private _cells:  T[][] = [];
+  private _cells: T[][] = [];
+  private _fillFn!: (x: number, y: number) => T
 
   public get width(): number {
     return this._width;
@@ -76,14 +77,25 @@ export abstract class Grid<T extends Cell> implements IGrid {
   }
 
   public fill(fillFn: (x: number, y: number) => T) {
+    this._fillFn = fillFn
     this._cells = new Array(this.height).fill(0).map((_, y) => new Array(this.width).fill(0).map((_, x) => fillFn(x, y)));
 
-    for (let y = 0; y < this.height; y++) {
-        for (let x = 0; x < this.width; x++) {
-            this.cells[y][x] = fillFn(x, y)
-        }
-    }
+    // for (let y = 0; y < this.height; y++) {
+    //     for (let x = 0; x < this.width; x++) {
+    //         this.cells[y][x] = fillFn(x, y)
+    //     }
+    // }
     return this
+  }
+
+  public reset() {
+    if (!this._fillFn)
+      this._cells = new Array(this.height).fill(0).map((_, y) => new Array(this.width).fill(0).map((_, x) => this._fillFn(x, y))); 
+      for (let y = 0; y < this.height; y++) {
+        for (let x = 0; x < this.width; x++) {
+            this.cells[y][x] = this._fillFn(x, y)
+        }
+      }
   }
 
   public getNeighborCells(x: number, y: number): T[] {

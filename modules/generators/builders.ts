@@ -146,6 +146,7 @@ export class Room extends Region<WalledCell> {
 
     addCell(cell: WalledCell): void {
         cell.color = this.color
+        cell.region = this
         cell.setWalkable(true)
         super.addCell(cell)
     }
@@ -153,6 +154,17 @@ export class Room extends Region<WalledCell> {
     addExit(cell: WalledCell) {
         this.exits.add(cell)
         this.addCell(cell)
+    }
+
+    getBorders(): WalledCell[] {
+        const borderCells: WalledCell[] = []
+        for (const cell of this.getCells().values()) {
+            if (cell.x === this.x || cell.x === this.x + this.width - 1 || cell.y === this.y || cell.y === this.y + this.height - 1) {
+                borderCells.push(cell)
+            }
+        }
+
+        return borderCells
     }
 
     static doesNotOverlap(room: Room, rooms: Room[]) {
@@ -179,16 +191,16 @@ export class RoomBuilder {
         let attempts = 0
         while (attempts++ < this.maxAttempts) {
             const room = generateRandomRoom(this.minRoomSize, this.maxRoomSize, this.grid.width, this.grid.height)
-            this.addRoom(room)
+            if (Room.doesNotOverlap(room, this.rooms)) {
+                this.addRoom(room)
+            }
         }
     }
 
     public addRoom(room: Room) {
-        if (Room.doesNotOverlap(room, this.rooms)) {
-            room.grid = this.grid
-            this.rooms.push(room)
-            this.placeRoom(room)
-        }
+        room.grid = this.grid
+        this.rooms.push(room)
+        this.placeRoom(room)
     }
 
     public placeRoom(room: Room) {
@@ -206,6 +218,26 @@ export class RoomBuilder {
                 room.addCell(cell);
             }
         }
+    }
+
+    public scaleTo(grid: WalledGrid, scale: number = 2) {
+        const rooms: Room[] = []
+        for (const room of this.rooms) {
+            const newRoom = new Room(room.x * scale, room.y * scale, room.width * scale - 1, room.height * scale - 1, room.color)
+
+            newRoom.grid = grid
+            for (let x = newRoom.x; x < (newRoom.x + newRoom.width); x++) {
+                for (let y = newRoom.y; y < (newRoom.y + newRoom.height); y++) {
+                    const cell = grid.getCell(x, y)
+                    if (!cell) continue
+                    cell.setWalkable(true)
+                    newRoom.addCell(cell)
+                }
+            }
+            rooms.push(newRoom)
+        }
+
+        return rooms
     }
 }
 
@@ -326,6 +358,145 @@ export class MazeBuilder {
         }
 
         return { grid, maze: scaledMaze }
+    }
+}
+
+export class GridPruner {
+    deadEnds: WalledCell[] = []
+    prunedCells: Set<WalledCell> = new Set()
+    constructor(public grid: WalledGrid) {
+        
+    }
+
+    public identifyDeadEnds() {
+        this.deadEnds = []
+        
+        for (const cell of this.grid.cellsFlat) {
+            if (cell.isWalkable() === false) continue
+            const walls = []
+
+            for (const direction of DIRECTIONS_CARDINAL) {
+                const neighborCell = this.grid.getCell(cell.x + direction[0], cell.y + direction[1])
+                if (neighborCell && neighborCell.isWalkable() === false) {
+                    walls.push(neighborCell)
+                }
+            }
+
+            // if it's surrounded on three sides, it's a dead end
+            if (walls.length === 3) {
+                this.deadEnds.push(cell)
+            }
+
+            if (walls.length <= 2) {
+                
+                const walkableNeighbors = []
+
+                for (const direction of DIRECTIONS_CARDINAL) {
+                    const neighborCell = this.grid.getCell(cell.x + direction[0], cell.y + direction[1])
+                    if (neighborCell?.isWalkable()) {
+                        walkableNeighbors.push(neighborCell)
+                    }
+                }
+
+                if (walkableNeighbors.length === 1) {
+                    this.deadEnds.push(cell)
+                }
+            }
+        }
+    }
+
+    public pruneDeadEnds() {
+        this.identifyDeadEnds()
+        for (const cell of this.deadEnds) {
+            cell.setWalkable(false)
+            cell.walls = [false, false, false, false]
+            this.prunedCells.add(cell)
+        }
+
+        return this
+    }
+
+    public pruneAll(until: number = 100) {
+        this.identifyDeadEnds()
+        while (this.deadEnds.length > 0 && until-- > 0) {
+            this.pruneDeadEnds()
+            this.identifyDeadEnds()
+        }
+        return this
+    }
+}
+
+
+ const cardinalDirections = [[0, 1], [1, 0]] as number[][];
+
+export class GridConnector {
+    sortedConnectors: Map<Room, WalledCell[]> = new Map()
+    constructor(public grid: WalledGrid, public rooms: Room[]) {}
+
+    public findConnectors(room: Room) {
+        const borderingWalls = room.getBorders().reduce((acc, cell) => {
+            for (const direction of cardinalDirections) {
+                const neighboringCell = this.grid.getCell(cell.x + direction[0], cell.y + direction[1])
+
+                if (neighboringCell?.isWalkable() === false && neighboringCell?.region !== room) {
+                    acc.push(neighboringCell)
+                    break
+                }
+            }
+
+            return acc
+        }, [] as WalledCell[])
+        if (borderingWalls.length === 0) return this
+        this.sortedConnectors.set(room, borderingWalls)
+
+        return this
+    }
+
+    public collapseConnectors() {
+        const processedRooms = new Set<Room>()
+
+        for (const room of this.rooms) {
+            this.findConnectors(room)
+        }
+
+        while (this.rooms.length > processedRooms.size) {
+            const availableRooms = this.rooms.filter(room => !processedRooms.has(room))
+
+           
+
+            const room = availableRooms[0]
+            const connectors = this.sortedConnectors.get(room) as WalledCell[]
+
+            const connector = connectors[Math.floor(Math.random() * connectors.length)]
+
+            if (!connector) {
+                if (room.exits.size === 0) {
+                    console.info("Room has no exits", { room })
+                }
+            }
+            for (const direction of cardinalDirections) {
+                const neighborCell = this.grid.getCell(connector.x + direction[0], connector.y + direction[1])
+
+                if (neighborCell?.isWalkable()) {
+                    room.addExit(connector)
+                    if (!room) console.warn("Room is null", { room, connector, neighborCell })
+                    this.pruneConnectors(room)
+                    processedRooms.add(room)
+                }
+            }
+
+            
+        }
+        return this
+    }
+
+    public pruneConnectors(room: Room) {
+        const connectors = this.sortedConnectors.get(room)
+        if (!connectors) return
+        for (const connector of connectors) {
+            if (Math.random() * 200 < 3) room.addExit(connector)
+        }
+        this.sortedConnectors.delete(room)
     }
 }
 

@@ -1,4 +1,4 @@
-import { Path, Room, WalledCell, WalledGrid } from '@modules/generators/builders';
+import { GridConnector, GridPruner, Path, Room, WalledCell, WalledGrid } from '@modules/generators/builders';
 import { CanvasViewport } from '@engine/render/viewport';
 import { RoomsAndMazesBuilder } from '@modules/generators/roomsAndMazes';
 import { Appearance, AppearanceData, ColorGraphics, getAppearance, getAppearanceGraphic, TinyMap, TinyTile } from "./temporary"
@@ -17,7 +17,7 @@ export class ForestMapGenerator implements MapGenerator {
     _viewport: CanvasViewport | undefined
 
     deadEnds: WalledCell[] = []
-    pruneAmounts: number = 10
+    pruneAmounts: number = 100
 
     connectors: WalledCell[] = []
 
@@ -50,6 +50,12 @@ export class ForestMapGenerator implements MapGenerator {
 
     public generate() {
         const { grid, maze, rooms } = this.gridGenerator.generate()
+        new GridConnector(grid, rooms).collapseConnectors()
+        const pruner = new GridPruner(grid).pruneAll(this.pruneAmounts)
+
+        for (const cell of pruner.prunedCells) {
+            maze.removeCell(cell)
+        }
         return this.build(grid, maze, rooms)
     }
 
@@ -131,60 +137,7 @@ export class ForestMapGenerator implements MapGenerator {
 
     // Migrated these from dungeon builder
     // should be its own module in the grid building pipeline
-    // public identifyDeadEnds(maze: Path) {
-    //     this.deadEnds = []
 
-    //     for (const cell of this.maze.getCells()) {
-    //         if (cell.isWalkable() === false) continue
-    //         const walls = []
-
-    //         for (const direction of DIRECTIONS_CARDINAL) {
-    //             const neighborCell = this.grid.getCell(cell.x + direction[0], cell.y + direction[1])
-    //             if (neighborCell && neighborCell.isWalkable() === false) {
-    //                 walls.push(neighborCell)
-    //             }
-    //         }
-
-    //         // if it's surrounded on three sides, it's a dead end
-    //         if (walls.length === 3) {
-    //             this.deadEnds.push(cell)
-    //         }
-
-    //         if (walls.length <= 2) {
-                
-    //             const walkableNeighbors = []
-
-    //             for (const direction of DIRECTIONS_CARDINAL) {
-    //                 const neighborCell = this.dungeon.grid.getCell(cell.x + direction[0], cell.y + direction[1])
-    //                 if (neighborCell?.isWalkable()) {
-    //                     walkableNeighbors.push(neighborCell)
-    //                 }
-    //             }
-
-    //             if (walkableNeighbors.length === 1) {
-    //                 this.deadEnds.push(cell)
-    //             }
-    //         }
-    //     }
-    // }
-
-    // public pruneDeadEnds() {
-    //     this.identifyDeadEnds()
-    //     for (const cell of this.deadEnds) {
-    //         cell.setWalkable(false)
-    //         this.maze.removeCell(cell)
-    //         cell.color = Color.fromString("black")
-    //         cell.walls = [false, false, false, false]
-    //     }
-    // }
-
-    // public pruneAll(until: number = 100) {
-    //     this.identifyDeadEnds()
-    //     while (this.deadEnds.length > 0 && until-- > 0) {
-    //         this.pruneDeadEnds()
-    //         this.identifyDeadEnds()
-    //     }
-    // }
 
     // public collapseConnectors() {
     //     this.connectors = findConnectors(this.grid)

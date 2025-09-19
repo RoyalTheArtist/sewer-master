@@ -15,6 +15,7 @@ export class RoomsAndMazesBuilder extends GridBuilder {
     }
 
     public start() {
+        this.grid.reset()
         this.roomBuilder.start()
         this.roomBuilder.addRooms()
         this.mazeBuilder.start()
@@ -34,12 +35,7 @@ export class RoomsAndMazesBuilder extends GridBuilder {
 
     public bake(factor: number = 2) {
         const { grid, maze } = this.mazeBuilder.scaleMaze()
-
-        const rooms: Room[] = []
-        for (const room of this.roomBuilder.rooms) {
-            const newRoom = new Room(room.x * factor, room.y * factor, room.width * factor - 1, room.height * factor - 1, room.color)
-            rooms.push(newRoom)
-        }
+        const rooms = this.roomBuilder.scaleTo(grid, factor)
 
         return { grid, maze, rooms }
     }

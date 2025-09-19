@@ -9,7 +9,7 @@ export class Region<T extends RegionCell> {
   private cells: Set<T> = new Set()
   constructor(grid?: Grid<T> | null) { this.grid = grid || null}
   addCell(cell: T) {
-    if (cell.region) {
+    if (cell.region && cell.region !== this) {
       cell.region.removeCell(cell)
     }
     cell.region = this
