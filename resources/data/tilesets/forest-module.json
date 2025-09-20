@@ -15,22 +15,33 @@
             "graphics": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
-                "location": [0, 16],
+                "location": [48, 16],
                 "variants": [
+                    [0, 16],
                     [16, 16],
                     [32, 16],
-                    [48, 16]
+                    [48, 16],
+                    [64, 16]
                 ]
+            }
+        },
+        "wornpath": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [64, 16]
+
             }
         },
         "path": {
             "graphics": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
-                "location": [64, 16],
+                "location": [16, 32],
                 "variants": [
-                    [80, 16]
-
+                    [80, 16],
+                    [0, 32],
+                    [16, 32]
                 ]
             }
         },
@@ -38,11 +49,27 @@
             "graphics": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
-                "location": [32, 32],
+                "location": [48, 48],
                 "variants": [
-                    [16, 32],
-                    [0, 32],
-                    [48, 32]
+                    [32, 32],
+                    [48, 32],
+                    [64, 32],
+                    [80, 32],
+                    [0, 48],
+                    [16, 48],
+                    [32, 48],
+                    [48, 48]
+                ]
+            }
+        },
+        "shortgrass": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [64, 32],
+                "variants": [
+                    [32, 48],
+                    [48, 48]
                 ]
             }
         },
@@ -50,14 +77,46 @@
             "graphics": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
-                "location": [32, 48],
+                "location": [80, 64],
                 "variants": [
-                    [64, 32],
-                    [80, 32],
-                    [0, 48],
-                    [16, 48],
-                    [48, 48],
-                    [64, 48]
+                    [64, 48],
+                    [80, 48],
+                    [32, 64],
+                    [80, 64]
+                ]
+            }
+        },
+        "doubletree": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [80, 48],
+                "variants": [
+                    [80, 48],
+                    [48, 64]
+                ]
+            }
+        },
+        "deadtree": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [16, 64],
+                "variants": [
+                    [0, 64],
+                    [16, 64],
+                    [64, 64]
+                ]
+            }
+        },
+        "yellowtree": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [32,64],
+                "variants": [
+                    [32,64],
+                    [48, 64]
                 ]
             }
         },
@@ -65,15 +124,15 @@
             "graphics": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
-                "location": [64, 48],
-                "variants": [[0, 64]]
+                "location": [0, 80],
+                "variants": [[16, 80]]
             }
         },
         "deepwater": {
             "graphics": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
-                "location": [16, 64]
+                "location": [32, 80]
             }
         }
     },

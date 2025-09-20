@@ -112,4 +112,15 @@ export abstract class Grid<T extends Cell> implements IGrid {
     }
     return neighbors;
   }
+
+  public getCellsInRect(x: number, y: number, width: number, height: number): T[] {
+    const cells: T[] = [];
+    for (let iy = y; iy < y + height; iy++) {
+      for (let ix = x; ix < x + width; ix++) {
+        const cell = this.getCell(ix, iy);
+        if (cell) cells.push(cell);
+      }
+    }
+    return cells;
+  }
 }

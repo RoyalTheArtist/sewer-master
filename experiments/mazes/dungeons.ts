@@ -54,6 +54,22 @@ function drawConnectors(cells: Cell[], surface: Surface, cellSize: number) {
     }
 }
 
+class DebugDisplay {
+    section: HTMLElement
+    constructor(elem: string, generator: ForestMapGenerator) {
+        this.section = document.querySelector(elem) as HTMLElement
+    }
+
+    update() {
+        this.section.innerHTML = ""
+
+        const infoLabel = document.createElement("span")
+        const trees = 0
+        infoLabel.innerHTML = `Tree Generated: ${ trees}`
+        this.section.appendChild(infoLabel)
+
+    }
+}
 
 
 // saving this
@@ -64,7 +80,8 @@ async function main() {
     createAppearances(tilesetData.appearances)
     
     const toolbar = new Toolbar(document.body)
-    const generator = new ForestMapGenerator(120, 70, 16).init()
+    // const generator = new ForestMapGenerator(100, 70, 16).init()
+    const generator = new ForestMapGenerator(70, 40, 16).init()
     const displayMaze = new DisplayGrid("work-maze", generator.gridGenerator.grid, 10)
 
     function tick() {

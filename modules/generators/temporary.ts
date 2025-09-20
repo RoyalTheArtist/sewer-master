@@ -5,6 +5,9 @@ import { Color } from '@engine/utils';
 import { Vector2D } from '@engine/utils';
 import { Surface } from '@engine/render/surface';
 import { Cell, Grid } from './grid';
+import { Region, RegionCell, RegionRect } from './region';
+import { Path, Room } from './builders';
+import { SpriteSheet } from '@engine/render/graphics/spritesheet';
 
 // Future self: pulled this out of the dungeon experiment to get the Forest Map generation working for Tiny Quest
 // Some is just temporary because I didn't want to deal with the existing types
@@ -53,7 +56,7 @@ export function getAppearance(name: string): { appearance: Appearance, graphicsD
     export function getAppearanceGraphic(data: AppearanceData) {
         const spritesheet = Resources.loadSpritesheet(data.graphics.resource)
         const sprite = spritesheet?.getSprite(new Vector2D(data.graphics.location[0], data.graphics.location[1]), new Vector2D(data.graphics.size[0], data.graphics.size[1]))
-        const graphic = new AppearanceGraphics(0, 0, 16, 16, sprite)
+        const graphic = new AppearanceGraphic(0, 0, 16, 16, sprite)
         return graphic
     }
 
@@ -89,8 +92,9 @@ export class ColorGraphics extends GraphicsObject {
 
 
 
-export class AppearanceGraphics extends GraphicsObject {
+export class AppearanceGraphic extends GraphicsObject {
     sprite: Sprite
+    lookslike: string = "blank"
     constructor(x: number, y: number, width: number, height: number, sprite: Sprite) {
         super(x, y, width, height)
         this.sprite = sprite
@@ -108,10 +112,17 @@ export class AppearanceGraphics extends GraphicsObject {
 
 export class Appearance {
     parent: TinyTile | undefined
-    graphic?: GraphicsObject
+    graphic?: AppearanceGraphic
     constructor(public lookslike: string) { }
 
     init() {
+        if (!this.graphic) {
+            const appearance = appearanceLibrary.get(this.lookslike)
+            if (!appearance) return
+            const graphic = getAppearanceGraphic(appearance.graphicsData)
+            this.graphic = graphic
+        }
+
         if (this.parent && this.graphic) {
             this.graphic.position.x = this.parent.x * 16
             this.graphic.position.y = this.parent.y * 16
@@ -126,9 +137,30 @@ export class Appearance {
         appearance.parent = this.parent
         return appearance.init()
     }
+
+    changeAppearance(lookslike: string) {
+        this.lookslike = lookslike
+
+        const appearance = appearanceLibrary.get(lookslike)
+        if (!appearance) return
+        const graphic = getAppearanceGraphic(appearance.graphicsData)
+        this.graphic.sprite = graphic.sprite
+    }
 }
 
-export class TinyTile extends Cell {
+export class TinyRoom extends RegionRect<TinyTile> {
+    constructor(grid: Grid<TinyTile>, public x: number, public y: number, public width: number, public height: number) {
+        super(grid)
+    }
+}
+
+class TinyPath extends Region<TinyTile> {
+    constructor(grid: Grid<TinyTile>) {
+        super(grid)
+    }
+}
+
+export class TinyTile extends RegionCell {
     passable: boolean = false
     transparent: boolean = false
     appearance?: Appearance
@@ -153,6 +185,13 @@ export class TinyTile extends Cell {
         }
         return this
     }
+
+    setApperance(lookslike: string) {
+        if (!this.appearance) this.appearance = new Appearance(lookslike)
+        this.appearance.parent = this
+        this.appearance.changeAppearance(lookslike)
+        this.appearance.init()
+    }
 }
 
 export class TileGrid extends Grid<TinyTile> {}
@@ -160,6 +199,8 @@ export class TileGrid extends Grid<TinyTile> {}
 
 export class TinyMap {
     tiles: TileGrid
+    rooms: TinyRoom[] = []
+    path: TinyPath | null = null
     appearances: Appearance[] = []
     constructor(width: number, height: number) {
         this.tiles = new TileGrid(width, height)
@@ -168,12 +209,6 @@ export class TinyMap {
     public fill(fill: (x: number, y: number) => TinyTile) {
         this.tiles.fill(fill)
         return this
-    }
-
-    draw(surface: Surface) {
-        for (let appearance of this.appearances) {
-            appearance.graphic?.draw(surface)
-        }
     }
 
     init() {
@@ -186,5 +221,31 @@ export class TinyMap {
             }
         }
         return this
+    }
+
+    draw(surface: Surface) {
+        for (let appearance of this.appearances) {
+            appearance.graphic?.draw(surface)
+        }
+    }
+
+    addRoom(room: Room) {
+        const tinyRoom = new TinyRoom(this.tiles, room.x, room.y, room.width, room.height)
+        this.rooms.push(tinyRoom)
+        const cells = this.tiles.getCellsInRect(room.x, room.y, room.width, room.height)
+        for (const cell of cells) {
+            cell.passable = true
+            tinyRoom.addCell(cell)
+        }
+    }
+
+    addPath(path: Path) {
+        if (!this.path) this.path = new TinyPath(this.tiles)
+        for (let cell of path.getCells()) {
+            const tile = this.tiles.getCell(cell.x, cell.y)!
+            tile.passable = true
+
+            this.path.addCell(tile)
+        }
     }
 }

@@ -3,6 +3,7 @@ export type RoomsAndMazesOptions = {
     maxRoomAttempts?: number
     minRoomSize?: number
     maxRoomSize?: number
+    pruneAmount?: number
 }
 
 export class RoomsAndMazesBuilder extends GridBuilder {
