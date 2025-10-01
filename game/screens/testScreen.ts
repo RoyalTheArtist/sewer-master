@@ -79,7 +79,7 @@ export class TestScreen extends BaseScreen {
         return this
     }
 
-    public initialize(engine: Engine): BaseScreen {
+    public initialize(engine: Engine) {
         engine.render.clear()
         
         if (engine.render instanceof GraphicsRenderSystem) {

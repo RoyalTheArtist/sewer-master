@@ -134,6 +134,20 @@
                 "size": [16, 16],
                 "location": [32, 80]
             }
+        },
+        "camp": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [48, 80]
+            }
+        },
+        "camp-lit": {
+            "graphics": {
+                "resource":"assets/images/tiny quest sprites.png",
+                "size": [16, 16],
+                "location": [64, 80]
+            }
         }
     },
     "tiles": [

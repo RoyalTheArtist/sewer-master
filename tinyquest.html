@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TinyQuest</title>
+
+    <style>
+      .breakout-grid {
+        --padding-inline: 2rem;
+        --content-max-width: 1000px;
+        
+        margin: 0;
+        margin-top:1em;
+        display: grid;
+        grid-template-columns: [full-start] minmax(var(--padding-inline), 1fr) [main-start] min(100% - var(--padding-inline) * 2, var(--content-max-width)) [main-end] minmax(var(--padding-inline), 1fr) [full-end];
+
+        > * {
+          grid-column: main;
+        }
+
+        > .full-width {
+          grid-column: full;
+          display: flex;
+          justify-content: center;
+        }
+    }
+
+      #tinyQuest {
+        > canvas {
+          max-width: 100%;
+        }
+        max-width: 100%;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 4px;
+      }
+    </style>
+  </head>
+  <body class="flex-col align-center breakout-grid">
+
+    <header>
+      <h1>TinyQuest</h1>
+    </header>
+    <section class="full-width">
+      <div id="tinyQuest" class="full-width"></div>
+    </section>
+
+
+    <section id="controls">
+      <h2>Controls</h2>
+      <ul>
+        <li>WASD to move</li>
+        <li>QEZC to move diagonally</li>
+        <li>P to Pickup Items</li>
+        <li>I to Open Inventory</li>
+      </ul></p>
+    </section>
+    <script type="module" src="/game/tinyQuest.ts"></script>
+  </body>
+</html>

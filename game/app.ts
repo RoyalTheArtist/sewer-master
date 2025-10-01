@@ -2,7 +2,7 @@ import '@/style.scss'
 
 import { Engine } from '@engine/engine'
 import { MainMenuScreen } from '@/screens/mainMenu/mainMenu.screen'
-import { App } from '../bt-engine/app.base'
+import { App } from '@engine/app.base'
 import { useGraphicsRenderSystem } from '@engine/render/system';
 
 const RENDER_CONFIG = {
@@ -23,3 +23,4 @@ export class BoneTorch extends App {
         engine.start()
     }
 }
+
