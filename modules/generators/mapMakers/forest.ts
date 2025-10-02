@@ -57,6 +57,7 @@ export class ForestGenerator implements MapGenerator {
     startingRoom: TinyRoom | undefined
     largestRoom: TinyRoom | undefined
     smallestRoom: TinyRoom | undefined
+    public startingTile: TinyTile | undefined
 
     constructor(public width: number, public height: number) {
         this.gridGenerator = new RoomsAndMazesBuilder(width / 2, height / 2, {
@@ -88,7 +89,6 @@ export class ForestGenerator implements MapGenerator {
         this.pruneTrees()
         this.wearPath()
         this.wearPath()
-        if (this.map)
         this.setEncounters(this.map)
        
         return this
@@ -122,6 +122,9 @@ export class ForestGenerator implements MapGenerator {
 
         const campSite = new CampsiteEncounter(this.smallestRoom)
         campSite.place(this.map!)
+
+        const roomCenter = this.smallestRoom.center
+        this.startingTile = this.map!.tiles.getCell(roomCenter.x - 1, roomCenter.y)
     }
 
     public findLargestRoom(rooms: TinyRoom[]) {

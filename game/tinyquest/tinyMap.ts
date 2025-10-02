@@ -2,6 +2,7 @@ import { Path, Room } from '@modules/generators/builders';
 import { TinyTile, TTile } from './tiles';
 import { Grid } from '@modules/generators/grid';
 import { Region, RegionRect } from '@modules/generators/region';
+import { Vector2D } from '@engine/utils/vectors';
 
 abstract class BaseMap<T extends TTile> {
     readonly tiles: T[] = []
@@ -25,8 +26,14 @@ class TinyPath extends Region<TinyTile> {
 }
 
 export class TinyRoom extends RegionRect<TinyTile> {
+    _center: Vector2D
     constructor(grid: Grid<TinyTile>, public x: number, public y: number, public width: number, public height: number) {
         super(grid)
+        this._center = new Vector2D(this.x + Math.floor( this.width / 2), this.y + Math.floor(this.height / 2))
+    }
+
+    get center(): Vector2D {
+        return this._center
     }
 }
 

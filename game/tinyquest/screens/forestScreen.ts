@@ -138,7 +138,10 @@ export class ForestScreen extends BaseScreen {
         const map = this.generator.generate().bake()
         this._map = map
         this.mapVisualizer.addTileAppearances(this._map.tiles.cellsFlat)
-        this.mapVisualizer.addEntityAppearance(24, 24)
+        const startingTile = this.generator.startingTile
+
+        if (startingTile) this.mapVisualizer.addEntityAppearance(startingTile.x * 16 + 8, startingTile.y * 16 + 8)
+        else this.mapVisualizer.addEntityAppearance(24, 24)
         return this
     }
 
