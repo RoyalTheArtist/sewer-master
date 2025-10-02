@@ -1,4 +1,5 @@
-import { TinyMap, TinyRoom, TinyTile } from "../temporary"
+
+import { TinyMap, TinyRoom } from "@/tinyquest/tinyMap"
 import { Encounter } from "./baseEncounter"
 
 export class PeacefulPondEncounter extends Encounter {
@@ -19,9 +20,9 @@ export class PeacefulPondEncounter extends Encounter {
                     || x === pondX + pondWidth - 1 && y === pondY + pondHeight - 1
                     || x === pondX + pondWidth - 1 && y === pondY
                     || x === pondX && y === pondY + pondHeight - 1) continue
-                const tile = map.tiles.getCell(x, y) as TinyTile
-                tile.passable = false
-                tile.appearance?.changeAppearance("water")
+                const tile = map.tiles.getCell(x, y)
+
+                tile?.changeAppearance("water")
             }
         }
 

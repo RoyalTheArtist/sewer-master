@@ -19,6 +19,11 @@ export class Cell implements ICell {
   constructor(x: number, y: number) {
     this._pos = new Vector2D(x, y)
   }
+
+  setPosition(x: number, y: number) { 
+    this._pos.x = x
+    this._pos.y = y
+   }
 }
 
 
@@ -69,6 +74,7 @@ export abstract class Grid<T extends Cell> implements IGrid {
   }
 
   public setCell(x: number, y: number, cell: T): void {
+    cell.setPosition(x, y);
     this.cells[y][x] = cell;
   }
 

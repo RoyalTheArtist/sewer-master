@@ -1,4 +1,4 @@
-import { GridBuilder, MazeBuilder, Path, Room, RoomBuilder, WalledGrid } from './builders';
+import { GridBuilder, GridConnector, GridPruner, MazeBuilder, Path, Room, RoomBuilder, WalledGrid } from './builders';
 export type RoomsAndMazesOptions = {
     maxRoomAttempts?: number
     minRoomSize?: number
@@ -9,10 +9,15 @@ export type RoomsAndMazesOptions = {
 export class RoomsAndMazesBuilder extends GridBuilder {
     roomBuilder: RoomBuilder
     mazeBuilder: MazeBuilder
+    connector
+    pruner = new GridPruner(this.grid)
     constructor(width: number, height: number, options?: RoomsAndMazesOptions) {
         super(width, height)
         this.roomBuilder = new RoomBuilder(this.grid, options?.maxRoomAttempts, options?.minRoomSize, options?.maxRoomSize)
         this.mazeBuilder = new MazeBuilder(this.grid)
+
+        this.connector = new GridConnector(this.grid, this.roomBuilder.rooms)
+        this.pruner = new GridPruner(this.grid)
     }
 
     public start() {
@@ -37,6 +42,16 @@ export class RoomsAndMazesBuilder extends GridBuilder {
     public bake(factor: number = 2) {
         const { grid, maze } = this.mazeBuilder.scaleMaze()
         const rooms = this.roomBuilder.scaleTo(grid, factor)
+
+        this.connector = new GridConnector(grid, rooms)
+        this.pruner = new GridPruner(grid)
+
+        this.connector.collapseConnectors()
+        const pruner = this.pruner.pruneAll(250)
+
+        for (const cell of pruner.prunedCells) {
+            maze.removeCell(cell)
+        }
 
         return { grid, maze, rooms }
     }

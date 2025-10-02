@@ -1,5 +1,5 @@
 
-import { Resources } from './../assets/loader';
+import { Resources } from '../../bt-engine/assets/loader';
 import { Sprite } from '@engine/render/graphics/sprite';
 import { Color } from '@engine/utils';
 import { Vector2D } from '@engine/utils';
@@ -13,7 +13,7 @@ import { SpriteSheet } from '@engine/render/graphics/spritesheet';
 // Some is just temporary because I didn't want to deal with the existing types
 
 export type AppearanceData = {
-    graphics: {
+    graphic: {
         resource: string
         size: [number, number]
         location: [number, number]
@@ -33,13 +33,13 @@ export const appearanceLibrary = new Map<string, {
 
 export function createAppearances(appearanceData: Record<string, AppearanceData>) {
     const blankAppearance = new Appearance("blank")
-    appearanceLibrary.set("blank", { appearance: blankAppearance, graphicsData: { graphics: { resource: "", size: [0, 0], location: [0, 0] } } })
+    appearanceLibrary.set("blank", { appearance: blankAppearance, graphicsData: { graphic: { resource: "", size: [0, 0], location: [0, 0] } } })
     for (const [name, data] of Object.entries(appearanceData)) {
         if (!appearanceLibrary.has(name)) {
             const appearance = new Appearance(name)
             appearanceLibrary.set(name, { appearance, graphicsData: data })
-            if (data.graphics.resource) {
-                Resources.loadSpritesheet(data.graphics.resource)
+            if (data.graphic.resource) {
+                Resources.loadSpritesheet(data.graphic.resource)
             }
         }
     }
@@ -54,8 +54,8 @@ export function getAppearance(name: string): { appearance: Appearance, graphicsD
 
 
     export function getAppearanceGraphic(data: AppearanceData) {
-        const spritesheet = Resources.loadSpritesheet(data.graphics.resource)
-        const sprite = spritesheet?.getSprite(new Vector2D(data.graphics.location[0], data.graphics.location[1]), new Vector2D(data.graphics.size[0], data.graphics.size[1]))
+        const spritesheet = Resources.loadSpritesheet(data.graphic.resource)
+        const sprite = spritesheet?.getSprite(new Vector2D(data.graphic.location[0], data.graphic.location[1]), new Vector2D(data.graphic.size[0], data.graphic.size[1]))
         const graphic = new AppearanceGraphic(0, 0, 16, 16, sprite)
         return graphic
     }
@@ -70,6 +70,11 @@ export class GraphicsObject {
         this.dimensions.x = width
         this.dimensions.y = height
         
+    }
+
+    setPosition(x: number, y: number) {
+        this.position.x = x
+        this.position.y = y
     }
 
     draw(surface: Surface) { 
@@ -148,104 +153,3 @@ export class Appearance {
     }
 }
 
-export class TinyRoom extends RegionRect<TinyTile> {
-    constructor(grid: Grid<TinyTile>, public x: number, public y: number, public width: number, public height: number) {
-        super(grid)
-    }
-}
-
-class TinyPath extends Region<TinyTile> {
-    constructor(grid: Grid<TinyTile>) {
-        super(grid)
-    }
-}
-
-export class TinyTile extends RegionCell {
-    passable: boolean = false
-    transparent: boolean = false
-    appearance?: Appearance
-    constructor(x: number, y: number, passable?: boolean, transparent?: boolean, appearance?: Appearance) {
-        super(x, y)
-        this.passable = passable || false
-        this.transparent = transparent || false
-        this.appearance = appearance
-    }
-
-    copy(x: number = this.x, y: number = this.y): TinyTile {
-        const copyAppearance = new Appearance(this.appearance?.lookslike || "blank")
-        const copyTile = new TinyTile(x, y, this.passable, this.transparent, copyAppearance)
-        copyAppearance.parent = copyTile
-        return new TinyTile(x, y, this.passable, this.transparent, new Appearance(this.appearance?.lookslike || ""))
-    }
-
-    init() {
-        if (this.appearance) {
-            this.appearance.parent = this
-            this.appearance.init()
-        }
-        return this
-    }
-
-    setApperance(lookslike: string) {
-        if (!this.appearance) this.appearance = new Appearance(lookslike)
-        this.appearance.parent = this
-        this.appearance.changeAppearance(lookslike)
-        this.appearance.init()
-    }
-}
-
-export class TileGrid extends Grid<TinyTile> {}
-
-
-export class TinyMap {
-    tiles: TileGrid
-    rooms: TinyRoom[] = []
-    path: TinyPath | null = null
-    appearances: Appearance[] = []
-    constructor(width: number, height: number) {
-        this.tiles = new TileGrid(width, height)
-    }
-
-    public fill(fill: (x: number, y: number) => TinyTile) {
-        this.tiles.fill(fill)
-        return this
-    }
-
-    init() {
-        this.appearances = []
-        for (let tile of this.tiles.cells.flat()) {
-            tile.init()
-            if (tile.appearance && tile.appearance.graphic) {
-                this.appearances.push(tile.appearance)
-                
-            }
-        }
-        return this
-    }
-
-    draw(surface: Surface) {
-        for (let appearance of this.appearances) {
-            appearance.graphic?.draw(surface)
-        }
-    }
-
-    addRoom(room: Room) {
-        const tinyRoom = new TinyRoom(this.tiles, room.x, room.y, room.width, room.height)
-        this.rooms.push(tinyRoom)
-        const cells = this.tiles.getCellsInRect(room.x, room.y, room.width, room.height)
-        for (const cell of cells) {
-            cell.passable = true
-            tinyRoom.addCell(cell)
-        }
-    }
-
-    addPath(path: Path) {
-        if (!this.path) this.path = new TinyPath(this.tiles)
-        for (let cell of path.getCells()) {
-            const tile = this.tiles.getCell(cell.x, cell.y)!
-            tile.passable = true
-
-            this.path.addCell(tile)
-        }
-    }
-}

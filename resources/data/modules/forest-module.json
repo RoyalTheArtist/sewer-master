@@ -3,16 +3,22 @@
         "name": "Forest Module",
         "size": [16, 16]
     },
+    "resources":[
+        "assets/images/tiny quest sprites.png"
+    ],
     "appearances": {
         "adventurer": {
-            "graphics": {
+            "shortDesc": "An adventurer",
+            "longDesc": "An adventurer, fit for adventuring",
+            "character": "@",
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [0, 0]
             }
         },
         "dirt": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [48, 16],
@@ -26,7 +32,7 @@
             }
         },
         "wornpath": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [64, 16]
@@ -34,7 +40,7 @@
             }
         },
         "path": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [16, 32],
@@ -46,7 +52,7 @@
             }
         },
         "grass": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [48, 48],
@@ -63,7 +69,7 @@
             }
         },
         "shortgrass": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [64, 32],
@@ -74,7 +80,7 @@
             }
         },
         "tree": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [80, 64],
@@ -87,7 +93,7 @@
             }
         },
         "doubletree": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [80, 48],
@@ -98,7 +104,7 @@
             }
         },
         "deadtree": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [16, 64],
@@ -110,7 +116,7 @@
             }
         },
         "yellowtree": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [32,64],
@@ -121,7 +127,7 @@
             }
         },
         "water": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [0, 80],
@@ -129,21 +135,21 @@
             }
         },
         "deepwater": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [32, 80]
             }
         },
         "camp": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [48, 80]
             }
         },
         "camp-lit": {
-            "graphics": {
+            "graphic": {
                 "resource":"assets/images/tiny quest sprites.png",
                 "size": [16, 16],
                 "location": [64, 80]
@@ -151,23 +157,45 @@
         }
     },
     "tiles": [
-                {
-                    "name": "dirt",
-                    "passable": true,
-                    "transparent": true,
-                    "appearance": "dirt"
-                },
-                {
-                    "name": "tree",
-                    "passable": false,
-                    "transparent": false,
-                    "appearance": "tree"
-                },
-                {
-                    "name": "grass",
-                    "passable": true,
-                    "transparent": true,
-                    "appearance": "grass"
-                }
-            ]
+        {
+            "name": "dirt",
+            "passable": true,
+            "transparent": true,
+            "appearance": {
+                "lookslike": "dirt"
+            }
+        },
+        {
+            "name": "tree",
+            "passable": false,
+            "transparent": false,
+            "appearance": {
+                "lookslike": "tree"
+            }
+        },
+        {
+            "name": "grass",
+            "passable": true,
+            "transparent": true,
+            "appearance": {
+                "lookslike": "grass"
+            }
+        },
+        {
+            "name": "path",
+            "passable": true,
+            "transparent": true,
+            "appearance": {
+                "lookslike": "path"
+            }
+        },
+        {
+            "name": "water",
+            "passable": false,
+            "transparent": true,
+            "appearance": {
+                "lookslike": "water"
+            }
+        }
+    ]
 }

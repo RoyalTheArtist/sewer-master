@@ -1,5 +1,5 @@
 
-import { Resources } from './../../modules/assets/loader';
+import { Resources } from '../../bt-engine/assets/loader';
 import { Surface } from "@engine/render/surface";
 import { Cell } from "@modules/generators/grid";
 import { Color } from "@engine/utils/color";

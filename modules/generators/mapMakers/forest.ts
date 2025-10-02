@@ -1,26 +1,55 @@
-import { PeacefulPondEncounter } from './encounters/peacefulPond';
-import { CampsiteEncounter } from './encounters/campsite';
-import { GridConnector, GridPruner, WalledCell } from '@modules/generators/builders';
-import { CanvasViewport } from '@engine/render/viewport';
+import { PeacefulPondEncounter } from '../encounters/peacefulPond';
+import { CampsiteEncounter } from '../encounters/campsite';
+import { Path, Room, WalledCell, WalledGrid } from '@modules/generators/builders';
 import { RoomsAndMazesBuilder } from '@modules/generators/roomsAndMazes';
-import { TinyMap, TinyRoom, TinyTile } from "./temporary"
-import { Color } from '@engine/utils/color';
-import { Vector2D } from '@engine/utils';
-import { mapFromGrid } from './utils';
+//import { mapFromGrid } from '../utils';
+import { MapGenerator } from '../mapGenerator'
+import { TTile, Tileset, TinyTile } from '@/tinyquest/tiles';
+import { TinyMap, TinyRoom } from '@/tinyquest/tinyMap'
 
-export interface MapGenerator {
-    width: number 
-    height: number
-    generate(): MapGenerator
+
+const mapFromGrid = (grid: WalledGrid, rooms: Room[], maze: Path, tileset: Tileset): TinyMap => {
+    const tinyMap = new TinyMap(grid.width, grid.height)
+    tinyMap.fill((x: number, y: number) => {
+        const copy = tileset.getTile("tree").copy()
+        copy.setPosition(x, y)
+        return copy
+    })
+
+    for (const cell of maze.getCells()) {
+        const tile = tileset.getTile("path")
+        tinyMap.tiles.setCell(cell.x, cell.y, tile)
+        tinyMap.addToPath(tile)
+    }
+
+    for (const room of rooms) {
+        const roomTiles = []
+
+        for (let i = room.x; i < room.x + room.width; i++) {
+            for (let j = room.y; j < room.y + room.height; j++) {
+                const tile = tileset.getTile("grass")
+                tinyMap.tiles.setCell(i, j, tile)
+                roomTiles.push(tile)
+            }
+        }
+
+        room.exits.forEach(exit => {
+            const tile = tileset.getTile("path")
+            tinyMap.tiles.setCell(exit.x, exit.y, tile)
+            roomTiles.push(tile)
+        })
+
+        tinyMap.addRoom(room.x, room.y, room.width, room.height, roomTiles)
+    }
+    
+    
+    return tinyMap.init()
 }
 
-export class ForestMapGenerator implements MapGenerator {
+export class ForestGenerator implements MapGenerator {
+    tileset: Tileset = new Tileset()
     map: TinyMap | undefined
     gridGenerator: RoomsAndMazesBuilder
-    _viewport: CanvasViewport | undefined
-    backgroundColor: Color = new Color(26, 11, 18, 1) //new Color(32,24,52, 1)
-
-    deadEnds: WalledCell[] = []
     pruneAmounts: number = 250
 
     connectors: WalledCell[] = []
@@ -29,26 +58,11 @@ export class ForestMapGenerator implements MapGenerator {
     largestRoom: TinyRoom | undefined
     smallestRoom: TinyRoom | undefined
 
-    public get viewport(): CanvasViewport {
-        if (!this._viewport) this.init()
-        if (!this._viewport) throw new Error("Viewport initialization failed when accessing viewport")
-        return this._viewport
-    }
-    constructor(public width: number, public height: number, public cellSize: number = 5) {
+    constructor(public width: number, public height: number) {
         this.gridGenerator = new RoomsAndMazesBuilder(width / 2, height / 2, {
             maxRoomAttempts: 30,
             maxRoomSize: 5
         })
-    }
-
-    init() {
-        this._viewport = CanvasViewport.createViewport(this.width  * this.cellSize, this.height * this.cellSize).attachTo("forest-map")
-        return this
-    }
-
-    setMap(map: TinyMap) {
-        this.map = map
-        return this
     }
 
     start() {
@@ -59,22 +73,23 @@ export class ForestMapGenerator implements MapGenerator {
 
     }
 
+    public createTileset(tiles: TTile[]) {
+        for (const tile of tiles) {
+            this.tileset.addTile(tile.name, tile)
+        }
+    }
+
     public generate() {
         const { grid, maze, rooms } = this.gridGenerator.generate()
-        new GridConnector(grid, rooms).collapseConnectors()
-        const pruner = new GridPruner(grid).pruneAll(this.pruneAmounts)
 
-        for (const cell of pruner.prunedCells) {
-            maze.removeCell(cell)
-        }
+        const map = mapFromGrid(grid, rooms, maze, this.tileset)
+        this.map = map.init()
 
-        const map = mapFromGrid(grid, rooms, maze)
-        this.setMap(map.init()) 
-      
-        this.prunePath()
+        this.pruneTrees()
         this.wearPath()
         this.wearPath()
-        this.setEncounters(map)
+        if (this.map)
+        this.setEncounters(this.map)
        
         return this
     }
@@ -91,7 +106,7 @@ export class ForestMapGenerator implements MapGenerator {
         this.findSmallestRoom(map.rooms)
         this.findLargestRoom(map.rooms)
 
-         this.buildPond()
+        this.buildPond()
         this.buildCampsite()
     }
 
@@ -127,7 +142,7 @@ export class ForestMapGenerator implements MapGenerator {
         return 
     }   
 
-    public prunePath() {
+    public pruneTrees() {
         if (!this.map?.path) return
         const treesTouchingMaze = []
         const cardinalDirections = [[0, 1], [1, 0]] as number[][];
@@ -152,8 +167,9 @@ export class ForestMapGenerator implements MapGenerator {
         for (const tree of treesTouchingMaze) {
             const removeTree = Math.random() <= 0.3
             if (!removeTree) continue
-            tree.passable = true
-            if (tree.appearance) tree.appearance.changeAppearance("shortgrass")
+            const grass = this.tileset.getTile("grass")
+            grass.changeAppearance("shortgrass")
+            this.map.tiles.setCell(tree.x, tree.y, grass)
             removedTrees.push(tree)
         }
         
@@ -180,30 +196,28 @@ export class ForestMapGenerator implements MapGenerator {
         for (const tree of treesTouchingRooms) {
             const removeTree = Math.random() <= 0.35
             if (!removeTree) continue
-            tree.passable = true
-            if (tree.appearance) tree.appearance.changeAppearance("grass")
+
+            const grass = this.tileset.getTile("grass")
+            this.map.tiles.setCell(tree.x, tree.y, grass)
             removedTrees.push(tree)
         }
 
         // finally lets make the trees a little less homogenous
 
         const remainingTrees = this.map?.tiles.cellsFlat.filter(tile => {
-            return !tile.passable && !removedTrees.includes(tile)
+            return tile.name === "tree" && !removedTrees.includes(tile)
         })
 
         for (const tree of remainingTrees) {
             const treeFate = Math.random()
             
             if (treeFate < 0.12) {
-                tree.passable = false
-                tree.appearance?.changeAppearance("deadtree")
+                tree.changeAppearance("deadtree")
             }
             else if (treeFate < 0.27) {
-                tree.passable = false
-                tree.appearance?.changeAppearance("yellowtree")
+                tree.changeAppearance("yellowtree")
             } else if (treeFate < 0.4) {
-                 tree.passable = false
-                tree.appearance?.changeAppearance("doubletree")
+                tree.changeAppearance("doubletree")
             }
         
             removedTrees.push(tree)
@@ -216,16 +230,11 @@ export class ForestMapGenerator implements MapGenerator {
             const wearTile = Math.random() <= 0.1
             if (!wearTile) continue
             const tile = this.map?.tiles.getCell(cell.x, cell.y) as TinyTile
-            tile.appearance?.changeAppearance("wornpath")
+            tile.changeAppearance("wornpath")
         }
     }
 
-    draw() {
-        this.viewport.surface.drawRect(new Vector2D(0, 0), new Vector2D(this.viewport.surface.width, this.viewport.surface.height),this.backgroundColor)
-        if (this.map) {
-            this.map.draw(this.viewport.surface)
-        }
-
-        return this
+    public bake(): TinyMap {
+        return this.map as TinyMap
     }
 }
