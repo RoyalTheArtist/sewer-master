@@ -1,4 +1,3 @@
-import { Vector2D } from "@engine/utils/vectors"
 import { RegionCell } from "@modules/generators/region"
 
 export type Appearance = {
@@ -14,8 +13,10 @@ export type TTile = {
 
 
 export class TinyTile extends RegionCell implements TTile {
-    constructor(public name: string, public passable: boolean, public appearance: Appearance, public transparent: boolean, x: number = 0, y: number = 0) {
+    appearance: Appearance
+    constructor(public name: string, public passable: boolean, appearance: Appearance, public transparent: boolean, x: number = 0, y: number = 0) {
         super(x, y)
+        this.appearance = { ...appearance }
     }
 
     copy(x?: number, y?: number): TinyTile {

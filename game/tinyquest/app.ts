@@ -1,24 +1,21 @@
 import { App } from "@engine/app.base"
 import { Engine } from "@engine/engine"
-import { useGraphicsRenderSystem } from "@engine/render/system"
-import { ForestScreen, TModule } from "./screens/forestScreen"
+import { RenderSystem, useGraphicsRenderSystem } from "@engine/render/system"
+import { ForestScreen,TModule } from "./screens/forestScreen"
+import { TQGameInputHandler } from "./handlers"
 
 
 export class TinyQuest extends App {
-    constructor(private type: "graphics" = "graphics", private elem: string = "tinyQuest",  private resolution: { width: number, height: number } = { width: 1120, height: 640 }) {
+    constructor(private render: RenderSystem) {
         super()
     }
 
     public async start() {
-        const render = useGraphicsRenderSystem({
-            type: this.type,
-            elem: this.elem,
-            resolution: this.resolution
-        })
-        const engine = new Engine(render)
+        const engine = new Engine(this.render)
         engine.start()
         const moduleData = await engine!.resource.loadJson<TModule>('/data/modules/forest-module.json')
-        const forestScreen = new ForestScreen(engine,moduleData)
+        const handler = new TQGameInputHandler(engine.input)
+        const forestScreen = new ForestScreen(handler,engine,moduleData)
         engine.setNextScreen(forestScreen)
     }
 }

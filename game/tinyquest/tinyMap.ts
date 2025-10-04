@@ -78,4 +78,10 @@ export class TinyMap {
             this.path.addCell(tile)
         }
     }
+
+    isWalkable(x: number, y: number) {
+        const cell = this.tiles.getCell(x, y)
+        if (!cell) return false
+        return this.tiles.isWithinBounds(x, y) && cell.passable 
+    }
 }

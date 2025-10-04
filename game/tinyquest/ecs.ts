@@ -1,17 +1,17 @@
 /**
  * Type alias for an entity id.
  */
-type Entity = number
+export type Entity = number
 
 /**
  * Abstract class for all components.
  */
-abstract class Component { }
+export abstract class Component { }
 
 /**
  * Abstract class for all systems.
  */
-abstract class System {
+export abstract class System {
     /**
      * Set of component classes required for the system to update the entity.
      */
@@ -33,17 +33,17 @@ abstract class System {
  * Type alias for a component class.
  * @template T - Type of component.
  */
-type ComponentClass<T extends Component> = new (...args: any[]) => T
+export type ComponentClass<T extends Component> = new (...args: any[]) => T
 
 /**
  * Container for components associated with an entity.
  */
-class ComponentContainer {
+export class ComponentContainer {
     /**
      * Map of component constructor to component instance.
      */
     private map = new Map<Function, Component>()
-
+    constructor(readonly entity: Entity, public ecs: ECS) { }
     /**
      * Adds a component to the container.
      * @param component - Component to add.
@@ -61,6 +61,13 @@ class ComponentContainer {
         return this.map.get(c) as T
     }
 
+    public getOfType<T extends Component>(c: ComponentClass<T>): T | undefined {
+        for (const component of this.map.values()) {
+            if (component instanceof c) {
+                return component as T
+            }
+        }
+    }
     /**
      * Checks if the container has all the components of the given component classes.
      * @param componentClasses - Iterable of component classes.
@@ -81,6 +88,11 @@ class ComponentContainer {
      * @returns True if the container has the component, false otherwise.
      */
     public has(componentClass: Function): boolean {
+        for (const component of this.map.values()) {
+            if (component instanceof componentClass) {
+                return true
+            }
+        }
         return this.map.has(componentClass)
     }
 
@@ -96,7 +108,7 @@ class ComponentContainer {
 /**
  * ECS (Entity Component System) class.
  */
-class ECS {
+export class ECS {
     /**
      * Map of entity id to component container.
      */
@@ -124,7 +136,7 @@ class ECS {
     public addEntity(): Entity {
         const entity = this.nextEntityId;
         this.nextEntityId++;
-        this.entities.set(entity, new ComponentContainer())
+        this.entities.set(entity, new ComponentContainer(entity, this))
         return entity
     }
 
@@ -187,7 +199,7 @@ class ECS {
      * Updates the ECS.
      */
     public update(): void {
-        for (let [system, entities] of this.systems) {
+        for (let [system, entities] of this.systems) { 
             system.update(entities)
         }
 

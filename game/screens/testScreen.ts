@@ -54,8 +54,8 @@ export class TestScreen extends BaseScreen {
     private tileViewer: MapTileViewer
     private entityViewer: MapEntityViewer
 
-    constructor() {
-        super()
+    constructor(engine: Engine) {
+        super(engine)
         this.tileViewer = new MapTileViewer()
         this.entityViewer = new MapEntityViewer()
     }
@@ -68,7 +68,7 @@ export class TestScreen extends BaseScreen {
         this._map = map
     }
 
-    async preload(): Promise<BaseScreen> {
+    async preload(): Promise<this> {
         const map = await loadMap()
         
         if (this.tileViewer) this.tileViewer.setTiles(map.getTileMap())
@@ -91,11 +91,13 @@ export class TestScreen extends BaseScreen {
     }
 
     public update(delta: number) {
-        const inputs = InputManager.getInputs(Settings.keyboardMappings.gameScreen)
+        const inputs = this.engine.input.getInputs(Settings.keyboardMappings.gameScreen)
         this.handler.handleInput(inputs)
 
         turnSystem.query(this.map?.getEntities() || new Set())
         turnSystem.update(delta)
         return this
     }
+
+    public render(): void {}
 }

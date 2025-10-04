@@ -7,6 +7,7 @@ import { Player } from "@/player"
 import { PickupAction } from "@game/actions/pickupActions"
 
 export class GameInputHandler extends InputHandler { 
+    nextHandler: InputHandler | null = null
     handleInput(input: StandardGameInput): Action | null {
         // if (input.axis.discrete.x !== 0 || input.axis.discrete.y !== 0) {
 

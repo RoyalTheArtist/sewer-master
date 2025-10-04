@@ -6,6 +6,7 @@ import { ActorAppearance } from "@modules/actors/components/appearance"
 import { Fighter } from "@modules/combat/fighter"
 import { BlocksMovement } from "@/lib/components"
 import { Active, AI } from "./ai/ai"
+import { Entity } from "@engine/ecs"
 
 export class Player {
     private static _nextTurn: Action | null = null
@@ -38,6 +39,7 @@ export class Player {
         return Player._player
     }
 }
+
 
 export class PlayerAI extends AI {
     constructor(public parent: Actor) { super() }
