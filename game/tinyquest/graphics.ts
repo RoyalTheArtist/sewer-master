@@ -8,6 +8,9 @@ import { Entity, System } from './ecs';
 import { Position, World } from './components';
 import { Appearance } from './components/appearance';
 import { GraphicsContainer, GraphicsObject } from '@engine/render/graphics/base';
+import { EventSystem } from './events';
+import { AnimationManager } from '@engine/render/graphics/animations/animations';
+import { MoveGraphicsAnimation } from '@modules/animations';
 
 export class TileAppearance extends GraphicsObject {
     private tile: TinyTile
@@ -66,6 +69,18 @@ export class WorldViewer extends System {
     tileLayer: GraphicsContainer
     entityLayer: GraphicsContainer
     appearanceLibrary = new Map<string, { sprite: Sprite, definition: SpriteDefinition }>()
+
+    set events(events: EventSystem) {
+        this._events = events
+        events.on("entity:moved", (data: { entity: Entity, from: Vector2D, to: Vector2D }) => {
+            console.log("entity moved", data)
+            const graphic = this.graphicParents.get(data.entity)
+            if (graphic) {
+                const destinationPos = new Vector2D(data.to.x * 16 + 8, data.to.y * 16 + 8)
+                AnimationManager.triggerAnimation(new MoveGraphicsAnimation(graphic, destinationPos, data.from, 100))
+            }
+        })
+    }
     constructor(public resource: AssetManager, public viewport: BaseViewport) {
         super()
         this.tileLayer = new GraphicsContainer(viewport.surface)

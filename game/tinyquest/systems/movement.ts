@@ -16,12 +16,16 @@ export class MovementSystem extends System {
             if (!container) throw new Error(`No container for entity ${entity}`)
             const moveTo = container.getOfType(MoveEntity)
             if (moveTo) {
-                console.debug(`Moving ${entity} to { x: ${moveTo.destination.x}, y: ${moveTo.destination.y} }`)
+                console.debug(`Entity ${entity} moved to (${moveTo.destination.x}, ${moveTo.destination.y})`)
                 const position = container.get(Position)
                 if (!position) throw new Error(`No position for entity ${entity}`)
+                const oldPosition = { ...position }
                 position.x = moveTo.destination.x
                 position.y = moveTo.destination.y
                 container.ecs.removeComponent(entity, MoveEntity)
+                if (this.events) {
+                    this.events.emit('entity:moved', { entity: entity, from: oldPosition, to: moveTo.destination })
+                }
             }
         }
     }

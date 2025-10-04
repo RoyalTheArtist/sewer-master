@@ -1,3 +1,5 @@
+import { EventSystem } from "./events"
+
 /**
  * Type alias for an entity id.
  */
@@ -27,6 +29,10 @@ export abstract class System {
      * ECS instance associated with the system.
      */
     public ecs: ECS
+    public _events?: EventSystem
+
+    get events(): EventSystem | undefined { return this._events }
+    set events(event: EventSystem) { this._events = event }
 }
 
 /**
@@ -129,6 +135,7 @@ export class ECS {
      */
     private entitiesToDestroy = new Array<Entity>()
 
+    private events: EventSystem = new EventSystem()
     /**
      * Adds an entity to the ECS.
      * @returns Entity id of the added entity.
@@ -188,7 +195,7 @@ export class ECS {
         }
         
         system.ecs = this
-
+        system.events = this.events
         this.systems.set(system, new Set<Entity>())
         for (let entity of this.entities.keys()) {
             this.checkES(entity, system)

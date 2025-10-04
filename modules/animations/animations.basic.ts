@@ -46,13 +46,15 @@ export class MoveSpriteAnimation extends RenderAnimation {
 
 export class MoveGraphicsAnimation extends RenderAnimation {
     private counter: number = 0
+    readonly from: Vector2D
     private increment: {x: number, y: number}
     public constructor(
         public readonly graphicsObject: GraphicsObject,
         public readonly to: Vector2D,
-        public readonly from: Vector2D,
+        _: Vector2D,
         public readonly duration: number = 100,) {
         super()
+        this.from = new Vector2D(graphicsObject.position.x, graphicsObject.position.y)
         this.increment = {
             x: (this.to.x - this.from.x) / this.duration,
             y: (this.to.y - this.from.y) / this.duration
@@ -70,7 +72,7 @@ export class MoveGraphicsAnimation extends RenderAnimation {
 
         const x = this.from.x + this.increment.x * this.counter
         const y = this.from.y + this.increment.y * this.counter
-        const position = new Vector2D(x, y)
-        this.graphicsObject.position = position
+         this.graphicsObject.position.x = x
+         this.graphicsObject.position.y = y
     }
 }

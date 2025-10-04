@@ -2,6 +2,7 @@ import { AI } from "@/tinyquest/components/ai"
 import { System, Entity } from "../../ecs"
 import { InQueue, MakeActive } from "./components"
 import { NoAction } from "@/tinyquest/actions/action"
+import { ImpossibleException } from "@engine/utils/exceptions"
 
 export class WakeupSystem extends System {
     componentsRequired = new Set([AI, MakeActive])
@@ -49,7 +50,14 @@ export class CombatSystem extends System {
 
         const action = ai.perform()
         if (action && !(action instanceof NoAction)) {
+            try {
             return action.perform(container)
+            } catch (error) {
+                if (error instanceof ImpossibleException) {
+                    console.warn(error.message)
+                    return false
+                }
+            }         
         }
     }
 }
